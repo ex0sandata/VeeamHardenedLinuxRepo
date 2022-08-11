@@ -2,6 +2,9 @@
 
 #### Einige Teile dieses Scripts stammen von hier: https://raw.githubusercontent.com/nextcloud/vm/master/lib.sh ####
 
+MENU_GUIDE="Navigieren Sie mit den Pfeiltasten und bestätigen Sie Ihhre Eingabe. Abbrechen mit [ESC]."
+TITLE="Veeam Backup Hardened Repository - $(date +%Y)"
+
 #### Install_if_not Installationsroutine, da apt install ueber CLI schwierigkeiten macht ####
 function install_if_not() {
     if ! dpkg-query -W -f='${Status}' "${1}" | grep -q "ok installed"
@@ -9,6 +12,13 @@ function install_if_not() {
         apt-get update -q4 & spinner_loading && RUNLEVEL=1 apt-get install "${1}" -y
     fi
 }
+
+if [[ $EUID -ne 0 ]]; then
+    set -e
+    print_text_in_color "$IRed" "Skript nicht als sudo / root ausgeführt, bitte Passwort eingeben:"
+    sudo "$0"
+    exit $?
+fi
 
 function print_text_in_color() {
     printf "%b%s%b\n" "$1" "$2" "$Color_Off"
@@ -19,6 +29,13 @@ function msg_box() {
     [ -n "$2" ] && local SUBTITLE=" - $2"
     whiptail --title "$TITLE$SUBTITLE" --msgbox "$1" "$WT_HEIGHT" "$WT_WIDTH" 3>&1 1>&2 2>&3
 }
+
+function input_box() {
+    [ -n "$2" ] && local SUBTITLE=" - $2"
+    local RESULT && RESULT=$(whiptail --title "$TITLE$SUBTITLE" --nocancel --inputbox "$1" "$WT_HEIGHT" "$WT_WIDTH" 3>&1 1>&2 2>&3)
+    echo "$RESULT"
+}
+
 
 #### requirement check fuer veeam: 2 Cores, 4GB RAM, 64Bit-OS ####
 function requirement_failed (){
