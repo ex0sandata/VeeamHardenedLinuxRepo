@@ -4,6 +4,9 @@
 
 MENU_GUIDE="Navigieren Sie mit den Pfeiltasten und bestätigen Sie Ihhre Eingabe. Abbrechen mit [ESC]."
 TITLE="Veeam Backup Hardened Repository - $(date +%Y)"
+SYSVENDOR=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
+ISSUES="https://github.com/ex0sandata/veeamhardenedlinuxrepo/issues"
+SCRIPTS=/var/scripts
 
 #### Install_if_not Installationsroutine, da apt install ueber CLI schwierigkeiten macht ####
 function install_if_not() {
@@ -13,17 +16,31 @@ function install_if_not() {
     fi
 }
 
+function spinner_loading() {
+    printf '['
+    while ps "$!" > /dev/null; do
+        echo -n '⣾⣽⣻'
+        sleep '.7'
+    done
+    echo ']'
+}
+
+function any_key() {
+    local PROMPT="$1"
+    read -r -sn 1 -p "$(printf "%b" "${IGreen}${PROMPT}${Color_Off}")";echo
+}
+
+
+function print_text_in_color() {
+    printf "%b%s%b\n" "$1" "$2" "$Color_Off"
+}
+
 if [[ $EUID -ne 0 ]]; then
     set -e
     print_text_in_color "$IRed" "Skript nicht als sudo / root ausgeführt, bitte Passwort eingeben:"
     sudo "$0"
     exit $?
 fi
-
-function print_text_in_color() {
-    printf "%b%s%b\n" "$1" "$2" "$Color_Off"
-}
-
 
 function msg_box() {
     [ -n "$2" ] && local SUBTITLE=" - $2"
@@ -34,6 +51,23 @@ function input_box() {
     [ -n "$2" ] && local SUBTITLE=" - $2"
     local RESULT && RESULT=$(whiptail --title "$TITLE$SUBTITLE" --nocancel --inputbox "$1" "$WT_HEIGHT" "$WT_WIDTH" 3>&1 1>&2 2>&3)
     echo "$RESULT"
+}
+
+function download_script() {
+    rm -rf /var/scripts
+    curl -sLO https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/{$1}
+}
+
+function run_script() {
+    if [ -z "$(ls -A /var/scripts)" ]
+    then
+        bash "${SCRIPTS}/${1}.sh"
+    else
+        print_text_in_color "$IRed" "Running ${1} failed"
+        sleep 2
+        print_text_in_color "$IRed" "Versuche Skripts zu downloaden....."
+        download_script ${1}
+    fi
 }
 
 
@@ -148,6 +182,27 @@ function calc_wt_size() {
     WT_MENU_HEIGHT=$((WT_HEIGHT-7))
     export WT_MENU_HEIGHT
 }
+
+function yesno_box_yes() {
+    [ -n "$2" ] && local SUBTITLE=" - $2"
+    if (whiptail --title "$TITLE$SUBTITLE" --yesno "$1" "$WT_HEIGHT" "$WT_WIDTH" 3>&1 1>&2 2>&3)
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function yesno_box_no() {
+    [ -n "$2" ] && local SUBTITLE=" - $2"
+    if (whiptail --title "$TITLE$SUBTITLE" --defaultno --yesno "$1" "$WT_HEIGHT" "$WT_WIDTH" 3>&1 1>&2 2>&3)
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
 
 
 # Check if process is runnnig: is_process_running dpkg
