@@ -53,6 +53,7 @@ else
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh --output /var/scripts/lib.sh 
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh --output /var/scripts/FormatDisk.sh
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh --output /var/scripts/fetch_lib.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh --output /var/scripts/SetupHardenedLinuxRepo.sh
 
     chmod +x /var/scripts/*.sh
 fi
@@ -109,15 +110,12 @@ then
     rm -rf /var/log/unattended-upgrades
 fi
 
-
-print_text_in_color "$BIGreen" "Lol skipped der das einfach?"
-
 #### Festplatten config #### 
 
-    msg_box "Dieser Server ist dafür designt, mit 2 Hard Disks zu laufen eine für das OS eine für Daten. \
-Dadurch wird das System performanter, da auf der zweiten Festplatte XFS (überlegenes FileSystem) läuft.\
-Obwohl es nicht empfohlen wird, kann dieses System auch nur auf einer Festplatte laufen, der Mountpoint für Backups ist /opt/ . \
-Bei dieser Option mit einer Festplatte, kann kein XFS verwendet werden!!
+    msg_box "Dieser Server ist dafür designt, mit 2 Hard Disks zu laufen, eine für das OS eine für Daten. \
+Dadurch wird das System performanter, da auf der zweiten Festplatte XFS (überlegenes FileSystem) läuft. \
+Obwohl es nicht empfohlen wird, kann dieses System auch nur auf einer Festplatte laufen, der Mountpoint für Backups ist  dann /opt/ . \
+Bei dieser Option mit einer Festplatte kann kein XFS verwendet werden!!
 "
 
     choice=$(whiptail --title "$TITLE - Festplattenformatierung" --nocancel --menu \
@@ -125,7 +123,6 @@ Bei dieser Option mit einer Festplatte, kann kein XFS verwendet werden!!
 $MENU_GUIDE" "$WT_HEIGHT" "$WT_WIDTH" 4 \
 "2 Festplatten" "(Wird automatisch konfiguriert)" \
 "1 Festplatte" "(Backups werden auf dieser Platte gemacht auf /opt/backups (KEIN XFS!!))" 3>&1 1>&2 2>&3)
-fi
 
 case "$choice" in
     "2 Festplatten")
