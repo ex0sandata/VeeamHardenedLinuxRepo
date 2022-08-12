@@ -30,6 +30,10 @@ function install_if_not() {
     fi
 }
 
+function update_system(){
+    apt-get update -q4 & spinner_loading && RUNLEVEL=1 apt-get full-upgrade -y
+}
+
 function any_key() {
     local PROMPT="$1"
     read -r -sn 1 -p "$(printf "%b" "${IGreen}${PROMPT}${Color_Off}")";echo
