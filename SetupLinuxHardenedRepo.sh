@@ -65,7 +65,7 @@ cpu_check 2 Veeam
 ram_check 4 Veeam
 check_distro_version
 
-print_text_in_color "$IGreen" "OS-Checks bestanden, continue"
+print_text_in_color "$BIGreen" "OS-Checks bestanden, continue"
 
 is_process_running apt
 is_process_running dpkg
@@ -96,6 +96,9 @@ then
     apt-get autoremove -y
     rm -rf /var/log/unattended-upgrades
 fi
+
+
+print_text_in_color "$BIGreen" "Lol skipped der das einfach?"
 
 #### Festplatten config #### 
 
