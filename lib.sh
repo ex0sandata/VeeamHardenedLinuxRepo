@@ -13,6 +13,7 @@ DISTRO=$(lsb_release -sr)
 CODENAME=$(lsb_release -sc)
 KEYBOARD_LAYOUT=$(localectl status | grep "Layout" | awk '{print $3}')
 
+
 #### Install_if_not Installationsroutine, da apt install ueber CLI schwierigkeiten macht ####
 function install_if_not() {
     if ! dpkg-query -W -f='${Status}' "${1}" | grep -q "ok installed"
@@ -166,7 +167,7 @@ function ram_check (){
 # Example: cpu_check 2 
 function cpu_check() {
     nr_cpu="$(nproc)"
-    if [ "${nr_cpu}" -lt "${2}" ]
+    if [ "${nr_cpu}" -lt "${1}" ]
     then
         print_text_in_color "$IRed" "Error: ${1} CPU required to install ${2}!" >&2
         print_text_in_color "$IRed" "Current CPU: ($((nr_cpu)))" >&2
