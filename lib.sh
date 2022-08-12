@@ -223,6 +223,7 @@ function yesno_box_no() {
 # Check if process is runnnig: is_process_running dpkg
 function is_process_running() {
     PROCESS="$1"
+    print_text_in_color "$IPurple" "Service ${PROCESS} wired abgefragt"
     while :
     do
         RESULT=$(pgrep "${PROCESS}")
