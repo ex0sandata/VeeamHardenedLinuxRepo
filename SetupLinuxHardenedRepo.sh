@@ -39,7 +39,7 @@ SCRIPT_NAME="Veeam Hardened Linux Repository Installation Skript"
 SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repo."
 
 # shellcheck source=lib.sh
-#source <(curl -sL ###ÄNDERN###)
+source <(curl -sL https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh)
 source ./lib.sh
 
 cpu_check 2 Veeam
@@ -78,9 +78,9 @@ fi
 #### Festplatten config #### 
 
     msg_box "Dieser Server ist dafür designt, mit 2 Hard Disks zu laufen eine für das OS eine für Daten. \
-Dadurch wird das System Performanter, da auf der zweiten Festplatte XFS (überlegenes FileSystem) läuft.\
-Obwohl es nicht empfohlen ist, kann dieses System auch nur auf einer Festplatte laufen, der Mountpoint für Backups ist /opt/ . \
-Bei der Option mit einer Festplatte, kann kein XFS verwendet werden!!
+Dadurch wird das System performanter, da auf der zweiten Festplatte XFS (überlegenes FileSystem) läuft.\
+Obwohl es nicht empfohlen wird, kann dieses System auch nur auf einer Festplatte laufen, der Mountpoint für Backups ist /opt/ . \
+Bei dieser Option mit einer Festplatte, kann kein XFS verwendet werden!!
 "
 
     choice=$(whiptail --title "$TITLE - Festplattenformatierung" --nocancel --menu \
@@ -92,11 +92,9 @@ fi
 
 case "$choice" in
     "2 Festplatten")
+        # ausgewählte Festplatte formattieren
         run_script DISK format-sdb
-        # Change to zfs-mount-generator
-        run_script DISK change-to-zfs-mount-generator
-        # Create daily zfs prune script
-        run_script DISK create-daily-zfs-prune
+        # 
 
     ;;
     "1 Festplatte")
