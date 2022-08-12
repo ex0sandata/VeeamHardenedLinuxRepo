@@ -91,7 +91,7 @@ install_if_not ufw
 install_if_not ssh
 install_if_not sudo
 install_if_not apt-transport-https
-install_if_not netplan
+install_if_not netplan.io
 
 ## nice to have dependencies
 
