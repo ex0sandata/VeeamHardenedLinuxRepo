@@ -55,6 +55,8 @@ fi
 #### Start:
 source /var/scripts/lib.sh
 
+install_if_not locales
+locale-gen en_US.UTF-8
 
 cpu_check 2 Veeam
 ram_check 4 Veeam
@@ -122,10 +124,6 @@ esac
 
 
 #### User anlegen: ####
-
-#### Festplatte für Repo und xfs: ####
-#mkfs.xfs -b size=4096 -m crc=1,reflink=1 /dev/sdb -f
-
 
 
 exit
