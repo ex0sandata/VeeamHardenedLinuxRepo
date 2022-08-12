@@ -141,6 +141,7 @@ function check_distro_version() {
         requirement_failed
         exit 1
     fi
+    print_text_in_color "$IGreen" "OS-Checks bestanden, Distro = $DISTRO, Version = $VERSION, OS = $OS"
 }
 
 function ram_check (){
