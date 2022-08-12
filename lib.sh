@@ -7,6 +7,7 @@ TITLE="Veeam Backup Hardened Repository - $(date +%Y)"
 SYSVENDOR=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
 ISSUES="https://github.com/ex0sandata/veeamhardenedlinuxrepo/issues"
 SCRIPTS=/var/scripts
+VERSION=cat /etc/os-release | awk '{print $2}' | sed -n 1p
 
 # Ubuntu OS
 DISTRO=$(lsb_release -sr)
@@ -85,18 +86,6 @@ function requirement_failed (){
 
 #### Check Ubuntu version ####
 
-function version(){
-    local h t v
-
-    [[ $2 = "$1" || $2 = "$3" ]] && return 0
-
-    v=$(printf '%s\n' "$@" | sort -V)
-    h=$(head -n1 <<<"$v")
-    t=$(tail -n1 <<<"$v")
-
-    [[ $2 != "$h" && $2 != "$t" ]]
-}
-
 function check_distro_version() {
     # Ubuntu 18.04 bionic oder Ubuntu 20.04 focal werden unterstuetzt
 
@@ -129,7 +118,7 @@ function check_distro_version() {
         exit 1
     fi
 
-    if ! version 18.04 "$DISTRO" 20.04.10; then
+    if ! $VERSION 18.04 "$DISTRO" 20.04.10; then
         msg_box "Die aktuell installierte Ubuntu Version ist $DISTRO aber muss zwischen 18.04 - 20.04 sein, um dieses Skript ausführen zu können."
         requirement_failed
         exit 1
