@@ -67,13 +67,16 @@ check_distro_version
 
 print_text_in_color "$BIGreen" "OS-Checks bestanden, continue"
 
+print_text_in_color "$BIPurple" "Checke, ob Prozess 'apt' laeuft...."
 is_process_running apt
+print_text_in_color "$BIPurple" "Checke, ob Prozess 'dpkg' laeuft...."
 is_process_running dpkg
 
 # Automatically restart services
 # Restart mode: (l)ist only, (i)nteractive or (a)utomatically.
-sed -i "s|#\$nrconf{restart} = .*|\$nrconf{restart} = 'a';|g" /etc/needrestart/needrestart.conf
+#sed -i "s|#\$nrconf{restart} = .*|\$nrconf{restart} = 'a';|g" /etc/needrestart/needrestart.conf
 
+print_text_in_color "$BIPurple" "Installiere dependencies...."
 install_if_not lshw
 install_if_not net-tools
 install_if_not whiptail
@@ -86,10 +89,12 @@ install_if_not netplan.io
 
 ## nice to have dependencies
 
+print_text_in_color "$BIPurple" "Installiere nice-to-have dependencies...."
 install_if_not htop
 install_if_not dnsutils
 
 # We don't want automatic updates since they might fail (we use our own script)
+print_text_in_color "$BIPurple" "deaktiviere automatische Updates...."
 if is_this_installed unattended-upgrades
 then
     apt-get purge unattended-upgrades -y
