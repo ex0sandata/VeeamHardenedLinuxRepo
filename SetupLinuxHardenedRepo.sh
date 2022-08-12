@@ -39,11 +39,21 @@ SCRIPT_NAME="Veeam Hardened Linux Repository Installation Skript"
 SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repo."
 
 # shellcheck source=lib.sh
-source <(curl -sL https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh)
-source ./lib.sh
+if [ -z /var/scripts ]
+then
+    rm -rf /var/scripts
+    mkdir /var/scripts
+else
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh --output /var/scripts/lib.sh 
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh --output /var/scripts/FormatDisk.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh --output /var/scripts/fetch_lib.sh
+
+    chmod +x /var/scripts/*.sh
+fi
 
 cpu_check 2 Veeam
 ram_check 4 Veeam
+check_distro_version
 
 is_process_running apt
 is_process_running dpkg
