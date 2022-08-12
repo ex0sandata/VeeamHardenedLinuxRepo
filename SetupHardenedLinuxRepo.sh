@@ -144,7 +144,7 @@ esac
 
 #### Festplatte für Repo und xfs: ####
 #mkfs.xfs -b size=4096 -m crc=1,reflink=1 /dev/sdb -f
-
+# echo furz
 
 
 exit
