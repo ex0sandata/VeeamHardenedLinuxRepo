@@ -36,7 +36,7 @@ fi
 
 true
 SCRIPT_NAME="Veeam Hardened Linux Repository Installation Skript"
-SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repo."
+SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repository."
    
 
 # shellcheck source=lib.sh
@@ -61,20 +61,20 @@ fi
 #### Start:
 source /var/scripts/lib.sh
 
+print_text_in_color "$BIPurple" "Generiere locale fuer aktuelle session...."
 install_if_not locales
 locale-gen en_US.UTF-8
 sleep 2
 export LANG=C.UTF-8
 
+msg_box "$SCRIPT_EXPLAINER"
+
 cpu_check 2 Veeam
 ram_check 4 Veeam
 check_distro_version
 
-print_text_in_color "$BIGreen" "OS-Checks bestanden, continue"
 
-print_text_in_color "$BIPurple" "Checke, ob Prozess 'apt' laeuft...."
 is_process_running apt
-print_text_in_color "$BIPurple" "Checke, ob Prozess 'dpkg' laeuft...."
 is_process_running dpkg
 
 # Automatically restart services
@@ -86,7 +86,7 @@ install_if_not lshw
 install_if_not net-tools
 install_if_not whiptail
 install_if_not apt-utils
-install_if_not apt-ufw
+install_if_not ufw
 install_if_not sshd
 install_if_not sudo
 install_if_not apt-transport-https
