@@ -223,9 +223,14 @@ function yesno_box_no() {
 # Check if process is runnnig: is_process_running dpkg
 function is_process_running() {
     PROCESS="$1"
-    ABFRAGE="pgrep ${1}"
+    ABFRAGE="pgrep -c ${1}"
     
     print_text_in_color "$IPurple" "Service ${PROCESS} wird abgefragt"
+    if [ "${ABFRAGE}" = 0 ]; then
+        print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv."
+        return
+    fi
+
     while :
     do
         RESULT=$(pgrep -c "${PROCESS}")
