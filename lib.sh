@@ -96,7 +96,7 @@ function check_distro_version() {
         OS=1
     fi
     
-    elif [ $(uname -m) = "x86_64" ] 
+    if [ $(uname -m) = "x86_64" ] 
     then
         OS=1
     else 
