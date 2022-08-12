@@ -227,11 +227,14 @@ function is_process_running() {
     while :
     do
         RESULT=$(pgrep "${PROCESS}")
-
+        print_text_in_color "$IBlue" "vor der if-schleife"
         if [ "${RESULT:-null}" = null ]; then
                 print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv, Break kommt jetzt"
                 break
                 print_text_in_color "$IBlue" "Break durch"
+        elif [ -z "${RESULT}" ]; then
+                print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv, Break kommt jetzt-2"
+                break
         else
                 print_text_in_color "$ICyan" "${PROCESS} is running, waiting for it to stop. Please be patient..."
                 sleep 30
