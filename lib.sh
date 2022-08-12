@@ -13,15 +13,6 @@ DISTRO=$(lsb_release -sr)
 CODENAME=$(lsb_release -sc)
 KEYBOARD_LAYOUT=$(localectl status | grep "Layout" | awk '{print $3}')
 
-
-#### Install_if_not Installationsroutine, da apt install ueber CLI schwierigkeiten macht ####
-function install_if_not() {
-    if ! dpkg-query -W -f='${Status}' "${1}" | grep -q "ok installed"
-    then
-        apt-get update -q4 & spinner_loading && RUNLEVEL=1 apt-get install "${1}" -y
-    fi
-}
-
 function spinner_loading() {
     printf '['
     while ps "$!" > /dev/null; do
@@ -29,6 +20,14 @@ function spinner_loading() {
         sleep '.7'
     done
     echo ']'
+}
+
+#### Install_if_not Installationsroutine ####
+function install_if_not() {
+    if ! dpkg-query -W -f='${Status}' "${1}" | grep -q "ok installed"
+    then
+        apt-get update -q4 & spinner_loading && RUNLEVEL=1 apt-get install "${1}" -y
+    fi
 }
 
 function any_key() {
@@ -96,26 +95,27 @@ function check_distro_version() {
 
     if [ "${CODENAME}" == "jammy" ] || [ "${CODENAME}" == "focal" || [ "${CODENAME}" == "bionic" ]
     then
-        print_text_in_color "$IGREEN" "CODENAME = ${CODENAME}"
+        print_text_in_color "$IBlue" "CODENAME = $CODENAME"
         OS=1
     elif lsb_release -i | grep -ic "Ubuntu" &> /dev/null
     then
-        print_text_in_color "$IGREEN" "LSB_RELEASE = Ubuntu"
+        print_text_in_color "$IBlue" "LSB_RELEASE = Ubuntu"
         OS=1
     elif uname -a | grep -ic "bionic" &> /dev/null || uname -a | grep -ic "focal" &> /dev/null  || uname -a | grep -ic "jammy" &> /dev/null
     then
-        print_text_in_color "$IGREEN" "uname == bionic || focal || jammy"
+        print_text_in_color "$IBlue" "uname == bionic || focal || jammy"
         OS=1
     elif uname -v | grep -ic "Ubuntu" &> /dev/null
     then
-        print_text_in_color "$IGREEN" "uname -v == ubuntu"
+        print_text_in_color "$IBlue" "uname -v == ubuntu"
         OS=1    
-    elif [ $(uname -m) = x86_64 ] 
-    then
-        print_text_in_color "$IGREEN" "uname -m == x86_64"
-        OS=1
     fi
 
+    if [ $(uname -m) = x86_64 ] 
+    then
+        print_text_in_color "$IBlue" "uname -m == x86_64"
+        OS=1
+    fi
 
     if [ "$OS" != 1 ]
     then
@@ -125,7 +125,7 @@ function check_distro_version() {
         exit 1
     fi
 
-    print_text_in_color "$IGreen" "OS-Checks bestanden, Distro = $DISTRO, Version = $VERSION, OS = $OS"
+    print_text_in_color "$IGreen" "OS-Checks bestanden, Distro = $DISTRO, OS = $OS"
 }
 
 function ram_check (){
@@ -150,9 +150,9 @@ function ram_check (){
     # Now check required mem
     mem_required="$((${1}*(924*1024)))" # 100MiB/GiB margin and allow 90% to be able to run on physical machines
     
-    print_text_in_color "$IGreen" "Memory Available = $mem_available"
-    print_text_in_color "$IGreen" "Memory Available in GB = $mem_available_gb"
-    print_text_in_color "$IGreen" "Memory Required = $mem_required"
+    print_text_in_color "$IBlue" "Memory Available = $mem_available"
+    print_text_in_color "$IBlue" "Memory Available in GB = $mem_available_gb"
+    print_text_in_color "$IBlue" "Memory Required = $mem_required"
 
     if [ "${mem_available}" -lt "${mem_required}" ]
     then
@@ -229,6 +229,7 @@ function is_process_running() {
 
         if [ "${RESULT:-null}" = null ]; then
                 break
+                print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv, continue"
         else
                 print_text_in_color "$ICyan" "${PROCESS} is running, waiting for it to stop. Please be patient..."
                 sleep 30
