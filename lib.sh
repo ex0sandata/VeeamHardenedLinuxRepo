@@ -89,13 +89,13 @@ function requirement_failed (){
 function check_distro_version() {
     # Ubuntu 18.04 bionic oder Ubuntu 20.04 focal werden unterstuetzt
 
-    if [ "${CODENAME}" == "jammy" ] || [ "${CODENAME}" == "focal" ]
+    if [ "${CODENAME}" == "jammy" ] || [ "${CODENAME}" == "focal" || [ "${CODENAME}" == "bionic" ]
     then
         OS=1
     elif lsb_release -i | grep -ic "Ubuntu" &> /dev/null
     then
         OS=1
-    elif uname -a | grep -ic "bionic" &> /dev/null || uname -a | grep -ic "focal" &> /dev/null
+    elif uname -a | grep -ic "bionic" &> /dev/null || uname -a | grep -ic "focal" &> /dev/null  || uname -a | grep -ic "jammy" &> /dev/null
     then
         OS=1
     elif uname -v | grep -ic "Ubuntu" &> /dev/null
@@ -118,8 +118,8 @@ function check_distro_version() {
         exit 1
     fi
 
-    if ! $VERSION 18.04 "$DISTRO" 20.04.10; then
-        msg_box "Die aktuell installierte Ubuntu Version ist $DISTRO aber muss zwischen 18.04 - 20.04 sein, um dieses Skript ausführen zu können."
+    if ! $VERSION 18.04 "$DISTRO" 22.04.10; then
+        msg_box "Die aktuell installierte Ubuntu Version ist $DISTRO aber muss zwischen 18.04 - 22.04 sein, um dieses Skript ausführen zu können."
         requirement_failed
         exit 1
     fi
