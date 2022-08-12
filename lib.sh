@@ -79,7 +79,7 @@ function run_script() {
 
 #### requirement check fuer veeam: 2 Cores, 4GB RAM, 64Bit-OS ####
 function requirement_failed (){
-    msg_box "Dieser Server besitzt nicht die Mindestanforderungen für Veeam Hardened Repository. Link zu den Minimumsanforderungen für die Hardware:
+    msg_box "Dieser Server besitzt nicht die Mindestanforderungen fuer Veeam Hardened Repository. Link zu den Minimumsanforderungen für die Hardware:
     https://helpcenter.veeam.com/docs/backup/vsphere/system_requirements.html?ver=110#backup-repository-server"
     exit 1
 }
@@ -92,55 +92,39 @@ function requirement_failed (){
 
 function check_distro_version() {
 
-    version(){
-    local h t v
-
-    [[ $2 = "$1" || $2 = "$3" ]] && return 0
-
-    v=$(printf '%s\n' "$@" | sort -V)
-    h=$(head -n1 <<<"$v")
-    t=$(tail -n1 <<<"$v")
-
-    [[ $2 != "$h" && $2 != "$t" ]]
-    }
-
     # Ubuntu 18.04 bionic oder Ubuntu 20.04 focal werden unterstuetzt
 
     if [ "${CODENAME}" == "jammy" ] || [ "${CODENAME}" == "focal" || [ "${CODENAME}" == "bionic" ]
     then
+        print_text_in_color "$IGREEN" "CODENAME = ${CODENAME}"
         OS=1
     elif lsb_release -i | grep -ic "Ubuntu" &> /dev/null
     then
+        print_text_in_color "$IGREEN" "LSB_RELEASE = Ubuntu"
         OS=1
     elif uname -a | grep -ic "bionic" &> /dev/null || uname -a | grep -ic "focal" &> /dev/null  || uname -a | grep -ic "jammy" &> /dev/null
     then
+        print_text_in_color "$IGREEN" "uname == bionic || focal || jammy"
         OS=1
     elif uname -v | grep -ic "Ubuntu" &> /dev/null
     then
+        print_text_in_color "$IGREEN" "uname -v == ubuntu"
+        OS=1    
+    elif [ $(uname -m) = x86_64 ] 
+    then
+        print_text_in_color "$IGREEN" "uname -m == x86_64"
         OS=1
     fi
-    
-    if [ $(uname -m) = "x86_64" ] 
-    then
-        OS=1
-    else 
-        OS=0
-    fi    
+
 
     if [ "$OS" != 1 ]
     then
-        msg_box "Dieses Script kann nur unter Ubuntu Server auf 64-bit installiert werden. Bitte nur auf diesem OS ausführen.
+        msg_box "Dieses Script kann nur unter Ubuntu Server LTS auf 64-bit installiert werden. Bitte nur auf diesem OS ausführen.
         Der Downloadlink ist hier: https://www.ubuntu.com/download/server"
         requirement_failed
         exit 1
     fi
 
-    if ! version 18.04 "$DISTRO" 22.04.10
-    then
-        msg_box "Die aktuell installierte Ubuntu Version ist $DISTRO aber muss zwischen 18.04 - 22.04 sein, um dieses Skript ausführen zu können."
-        requirement_failed
-        exit 1
-    fi
     print_text_in_color "$IGreen" "OS-Checks bestanden, Distro = $DISTRO, Version = $VERSION, OS = $OS"
 }
 
