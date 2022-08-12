@@ -51,6 +51,11 @@ else
     chmod +x /var/scripts/*.sh
 fi
 
+
+#### Start:
+source /var/scripts/lib.sh
+
+
 cpu_check 2 Veeam
 ram_check 4 Veeam
 check_distro_version
