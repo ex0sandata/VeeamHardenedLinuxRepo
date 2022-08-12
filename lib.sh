@@ -150,6 +150,11 @@ function ram_check (){
 
     # Now check required mem
     mem_required="$((${1}*(924*1024)))" # 100MiB/GiB margin and allow 90% to be able to run on physical machines
+    
+    print_text_in_color "$IGreen" "Memory Available = $mem_available"
+    print_text_in_color "$IGreen" "Memory Available in GB = $mem_available_gb"
+    print_text_in_color "$IGreen" "Memory Required = $mem_required"
+
     if [ "${mem_available}" -lt "${mem_required}" ]
     then
         print_text_in_color "$IRed" "Error: ${1} GB RAM required to install ${2}!" >&2
