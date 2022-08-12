@@ -40,12 +40,12 @@ SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened
    
 
 # shellcheck source=lib.sh
-if [ -d /var/scripts ]
+if [ ! -d /var/scripts ]
 then
     mkdir /var/scripts
 fi
 
-if [ ! -z /var/scripts ]
+if [ -z /var/scripts ]
 then
     rm -rf /var/scripts
     mkdir /var/scripts
