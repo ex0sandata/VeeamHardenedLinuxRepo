@@ -86,11 +86,24 @@ function requirement_failed (){
 
 #### Check Ubuntu version ####
 
-function version (){
-    cat /etc/os-release | awk '{print $2}' | sed -n 1p
-}
+# function version (){
+#     cat /etc/os-release | awk '{print $2}' | sed -n 1p
+# }
 
 function check_distro_version() {
+
+    version(){
+    local h t v
+
+    [[ $2 = "$1" || $2 = "$3" ]] && return 0
+
+    v=$(printf '%s\n' "$@" | sort -V)
+    h=$(head -n1 <<<"$v")
+    t=$(tail -n1 <<<"$v")
+
+    [[ $2 != "$h" && $2 != "$t" ]]
+    }
+
     # Ubuntu 18.04 bionic oder Ubuntu 20.04 focal werden unterstuetzt
 
     if [ "${CODENAME}" == "jammy" ] || [ "${CODENAME}" == "focal" || [ "${CODENAME}" == "bionic" ]
@@ -122,7 +135,8 @@ function check_distro_version() {
         exit 1
     fi
 
-    if ! version 18.04 "$DISTRO" 22.04.10; then
+    if ! version 18.04 "$DISTRO" 22.04.10
+    then
         msg_box "Die aktuell installierte Ubuntu Version ist $DISTRO aber muss zwischen 18.04 - 22.04 sein, um dieses Skript ausführen zu können."
         requirement_failed
         exit 1
@@ -136,7 +150,6 @@ function ram_check (){
     # Call it like this: ram_check [amount of min RAM in GB] [for which program]
     # Example: ram_check 4 Veeam
     install_if_not bc
-    export LANG=C.UTF-8
     # First, we need to check locales, since the functino depends on it.
     # When we know the locale, we can then calculate mem available without any errors.
     if locale | grep -c "C.UTF-8"
