@@ -53,6 +53,7 @@ else
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh --output /var/scripts/lib.sh 
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh --output /var/scripts/FormatDisk.sh
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh --output /var/scripts/fetch_lib.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupLinuxHardenedRepo.sh --output /var/scripts/SetupLinuxHardenedRepo.sh
 
     chmod +x /var/scripts/*.sh
 fi
@@ -87,10 +88,10 @@ install_if_not net-tools
 install_if_not whiptail
 install_if_not apt-utils
 install_if_not ufw
-install_if_not sshd
+install_if_not ssh
 install_if_not sudo
 install_if_not apt-transport-https
-install_if_not netplan.io
+install_if_not netplan
 
 ## nice to have dependencies
 
