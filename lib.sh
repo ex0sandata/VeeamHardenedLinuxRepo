@@ -136,6 +136,7 @@ function ram_check (){
     # Call it like this: ram_check [amount of min RAM in GB] [for which program]
     # Example: ram_check 4 Veeam
     install_if_not bc
+    export LANG=C.UTF-8
     # First, we need to check locales, since the functino depends on it.
     # When we know the locale, we can then calculate mem available without any errors.
     if locale | grep -c "C.UTF-8"
