@@ -230,7 +230,9 @@ function is_process_running() {
         print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv."
         return
     fi
-
+    
+    print_text_in_color "$IPurple" "While-Schleife fuerr ${PROCESS} incoming...."
+    
     while :
     do
         RESULT=$(pgrep -c "${PROCESS}")
