@@ -58,6 +58,27 @@ function input_box() {
     echo "$RESULT"
 }
 
+function input_box_flow() {
+    local RESULT
+    while :
+    do
+        RESULT=$(input_box "$1" "$2")
+        if [ -z "$RESULT" ]
+        then
+            msg_box "Input is empty, bitte erneut versuchen." "$2"
+        elif ! yesno_box_yes "Ist das korrekt? $RESULT" "$2"
+        then
+            msg_box "OK, bitte erneut versuchen." "$2"
+        else
+            break
+        fi
+    done
+    echo "$RESULT"
+}
+
+
+
+
 function download_script() {
     rm -rf /var/scripts
     curl -sLO https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/{$1}
@@ -218,13 +239,32 @@ function yesno_box_no() {
     fi
 }
 
-
+function install_popup() {
+    msg_box "$SCRIPT_EXPLAINER"
+    if yesno_box_yes "Do you want to install $1?"
+    then
+        print_text_in_color "$ICyan" "Installing $1..."
+    else
+        if [ -z "$2" ] || [ "$2" = "exit" ]
+        then
+            exit 1
+        elif [ "$2" = "sleep" ]
+        then
+            sleep 1
+        elif [ "$2" = "return" ]
+        then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+}
 
 # Check if process is runnnig: is_process_running dpkg
 function is_process_running() {
     PROCESS="$1"
     
-    print_text_in_color "$IPurple" "Service ${PROCESS} wird abgefragt"
+    print_text_in_color "$BIPurple" "Checke, ob Prozess '$PROCESS' laeuft...."
     if [ $(pgrep -c $PROCESS) = 0 ]; then
         print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv."
         return
