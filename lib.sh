@@ -226,28 +226,19 @@ function is_process_running() {
     ABFRAGE="pgrep -c ${1}"
     
     print_text_in_color "$IPurple" "Service ${PROCESS} wird abgefragt"
-    if [ "${ABFRAGE}" = 0 ]; then
+    if [ $ABFRAGE = 0 ]; then
         print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv."
         return
+    else 
+        while [ $ABFRAGE != 0 ]
+        do
+            print_text_in_color "$ICyan" "${PROCESS} ist noch aktiv, bitte warten...."
+            sleep 20
+            
+        done
     fi
     
     print_text_in_color "$IPurple" "While-Schleife fuerr ${PROCESS} incoming...."
-    
-    while :
-    do
-        RESULT=$(pgrep -c "${PROCESS}")
-        if [ "${RESULT}" = 0 ]; then
-                print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv, Break kommt jetzt"
-                break
-                print_text_in_color "$IBlue" "Break durch"
-        elif [ "${RESULT}" != 0 ]; then
-                print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv, Break kommt jetzt-2"
-                break
-        else
-                print_text_in_color "$ICyan" "${PROCESS} is running, waiting for it to stop. Please be patient..."
-                sleep 30
-        fi
-    done
 }
 
 # Check if program is installed (is_this_installed apache2)
