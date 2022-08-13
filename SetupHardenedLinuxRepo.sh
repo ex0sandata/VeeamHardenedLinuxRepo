@@ -2,7 +2,7 @@
 
 #### Einige Teile dieses Scripts stammen von hier: https://github.com/nextcloud/vm/blob/master/nextcloud_install_production.sh/ ####
     
-#### als sudo oder root ausfuehren ####
+#### als sudo oder root ausführen ####
 set -e
 if [[ $EUID -ne 0 ]]; then
     sudo "$0"
@@ -62,7 +62,7 @@ fi
 #### Start:
 source /var/scripts/lib.sh
 
-print_text_in_color "$BIPurple" "Generiere locale fuer aktuelle session...."
+print_text_in_color "$BIPurple" "Generiere locale für aktuelle session...."
 install_if_not locales
 locale-gen en_US.UTF-8
 sleep 2
@@ -127,12 +127,13 @@ $MENU_GUIDE" "$WT_HEIGHT" "$WT_WIDTH" 4 \
 case "$choice" in
     "2 Festplatten")
         # ausgewählte Festplatte formattieren
-        run_script DISK format-sdb
+        print_text_in_color "$IRed" "Setup mit 2 Festplatten ausgewählt."
+        run_script FormatDisk
         # 
 
     ;;
     "1 Festplatte")
-        print_text_in_color "$IRed" "1 Disk setup chosen."
+        print_text_in_color "$IRed" "Setup mit 1 Festplatte ausgewählt."
         sleep 2
     ;;
     *)
@@ -144,7 +145,7 @@ esac
 
 #### Festplatte für Repo und xfs: ####
 #mkfs.xfs -b size=4096 -m crc=1,reflink=1 /dev/sdb -f
-# echo furz
+
 
 
 exit
