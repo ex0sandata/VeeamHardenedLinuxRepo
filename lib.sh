@@ -101,7 +101,7 @@ function run_script() {
 }
 
 
-#### requirement check fuer veeam: 2 Cores, 4GB RAM, 64Bit-OS ####
+#### requirement check für veeam: 2 Cores, 4GB RAM, 64Bit-OS ####
 function requirement_failed (){
     msg_box "Dieser Server besitzt nicht die Mindestanforderungen fuer Veeam Hardened Repository. Link zu den Minimumsanforderungen für die Hardware:
     https://helpcenter.veeam.com/docs/backup/vsphere/system_requirements.html?ver=110#backup-repository-server"
@@ -116,9 +116,9 @@ function requirement_failed (){
 
 function check_distro_version() {
 
-    # Ubuntu 18.04 bionic oder Ubuntu 20.04 focal werden unterstuetzt
+    # Ubuntu 18.04 bionic oder Ubuntu 20.04 focal werden unterstützt
 
-    if [ "${CODENAME}" == "jammy" ] || [ "${CODENAME}" == "focal" || [ "${CODENAME}" == "bionic" ]
+    if [ "${CODENAME}" == "jammy" ] || [ "${CODENAME}" == "focal" ] || [ "${CODENAME}" == "bionic" ]
     then
         print_text_in_color "$IBlue" "CODENAME = $CODENAME"
         OS=1
@@ -268,7 +268,7 @@ function install_popup() {
 function is_process_running() {
     PROCESS="$1"
     
-    print_text_in_color "$BIPurple" "Checke, ob Prozess '$PROCESS' laeuft...."
+    print_text_in_color "$BIPurple" "Checke, ob Prozess '$PROCESS' läuft...."
     if [ $(pgrep -c $PROCESS) = 0 ]; then
         print_text_in_color "$IBlue" "${PROCESS} ist nicht aktiv."
         return
@@ -283,11 +283,18 @@ function is_process_running() {
 
 # Check if program is installed (is_this_installed apache2)
 function is_this_installed() {
-if dpkg-query -W -f='${Status}' "${1}" | grep -q "ok installed"
+    if dpkg-query -W -f='${Status}' "${1}" | grep -q "ok installed"
     then
         return 0
     else
         return 1
+    fi
+}
+
+function run_script(){
+    if [ ! -z "${SCRIPTS}" ]
+    then
+        bash "${SCRIPTS}/${1}.sh"
     fi
 }
 
