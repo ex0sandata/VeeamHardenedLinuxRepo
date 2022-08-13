@@ -55,6 +55,7 @@ else
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh --output /var/scripts/fetch_lib.sh
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh --output /var/scripts/SetupHardenedLinuxRepo.sh
 
+
     chmod +x /var/scripts/*.sh
 fi
 
