@@ -20,7 +20,7 @@ format() {
 umount /mnt/* &> /dev/null
 
 # mkdir if not existing
-mkdir -p "$MOUNT_"
+mkdir -p "/opt/backups"
 
 msg_box "Sie werden nun eine Liste von Geräten sehen, auf welchen das Backupverzeichnis angelegt werden soll:
 Achtung! Alle Daten auf dieser Platte werden gelöscht werden!"
