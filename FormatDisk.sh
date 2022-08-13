@@ -103,9 +103,10 @@ then
     msg_box "Formattiere auf diesem System das Volumen: ($DISKTYPE) wenn Sie OK drücken.
     *** WARNUNG: ALLE DATEN AUF DIESEM DATENTRÄGER WERDEN GELÖSCHT! ***"
     
-
-    check_command wipefs -a -f /dev/"$DISKTYPE"
+    print_text_in_color "$Blue" "/dev/$DISKTYPE wird gelöscht..."
+    wipefs -a -f /dev/"$DISKTYPE"
     sleep 0.5
+    print_text_in_color "$IBlue" "/dev/$DISKTYPE wird mit XFS formattiert..."
     mkfs.xfs -b size=4096 -m crc=1,reflink=1 /dev/"$DISKTYPE" -f
     
 
