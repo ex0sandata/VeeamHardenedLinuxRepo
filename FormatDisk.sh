@@ -121,6 +121,7 @@ fi
 
 format
 
+print_text_in_color "$IGreen" "/dev/$DISKTYPE wurde erfolgreich eingerichtet!"
 
 # Check if UUID is used
 if zpool list -v | grep "$DEVTYPE"
