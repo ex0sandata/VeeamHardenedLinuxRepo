@@ -9,8 +9,12 @@ MOUNT_="/opt/backups"
 # shellcheck source=lib.sh
 source /var/scripts/lib.sh
 
-# Check if root
-root_check
+if [[ $EUID -ne 0 ]]; then
+    set -e
+    print_text_in_color "$IRed" "Skript nicht als sudo / root ausgeführt, bitte Passwort eingeben:"
+    sudo "$0"
+    exit $?
+fi
 
 # Needed for partprobe
 install_if_not parted
@@ -30,8 +34,8 @@ mapfile -t AVAILABLEDEVICES <<< "$AVAILABLEDEVICES"
 
 # Ask for user input
 while
-    # lsblk
-    lsblk | grep disk | awk '{print $1, $4}' | column -t | 
+    lsblk
+    #lsblk | grep disk | awk '{print $1, $4}' | column -t | 
     read -r -e -p "Speicherort für Veeam-Backupdaten eingeben:" -i "$DEVTYPE" userinput
     userinput=$(echo "$userinput" | awk '{print $1}')
         for disk in "${AVAILABLEDEVICES[@]}";
