@@ -103,11 +103,11 @@ then
     msg_box "Formattiere auf diesem System das Volumen: ($DISKTYPE) wenn Sie OK drücken.
     *** WARNUNG: ALLE DATEN AUF DIESEM DATENTRÄGER WERDEN GELÖSCHT! ***"
     
-    print_text_in_color "$Blue" "/dev/$DISKTYPE wird gelöscht..."
-    wipefs -a -f /dev/"$DISKTYPE"
+    print_text_in_color "$Blue" "$DISKTYPE wird gelöscht..."
+    wipefs -a -f "$DISKTYPE"
     sleep 0.5
-    print_text_in_color "$IBlue" "/dev/$DISKTYPE wird mit XFS formattiert..."
-    mkfs.xfs -b size=4096 -m crc=1,reflink=1 /dev/"$DISKTYPE" -f
+    print_text_in_color "$IBlue" "$DISKTYPE wird mit XFS formattiert..."
+    mkfs.xfs -b size=4096 -m crc=1,reflink=1 "$DISKTYPE" -f
     
 
 else
@@ -121,7 +121,7 @@ fi
 
 format
 
-print_text_in_color "$IGreen" "/dev/$DISKTYPE wurde erfolgreich eingerichtet!"
+print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
 
 # Check if UUID is used
 if zpool list -v | grep "$DEVTYPE"
