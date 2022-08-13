@@ -54,7 +54,7 @@ else
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh --output /var/scripts/FormatDisk.sh
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh --output /var/scripts/fetch_lib.sh
     curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh --output /var/scripts/SetupHardenedLinuxRepo.sh
-
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh --output /var/scripts/AddUser.sh
 
     chmod +x /var/scripts/*.sh
 fi
@@ -128,14 +128,35 @@ $MENU_GUIDE" "$WT_HEIGHT" "$WT_WIDTH" 4 \
 case "$choice" in
     "2 Festplatten")
         # ausgewählte Festplatte formattieren
-        print_text_in_color "$IRed" "Setup mit 2 Festplatten ausgewählt."
+        print_text_in_color "$IPurple" "Setup mit 2 Festplatten ausgewählt."
         run_script FormatDisk
         # 
 
     ;;
     "1 Festplatte")
-        print_text_in_color "$IRed" "Setup mit 1 Festplatte ausgewählt."
+        print_text_in_color "$IPurple" "Setup mit 1 Festplatte ausgewählt."
         sleep 2
+
+        isMounted() { findmnt -rno SOURCE,TARGET "$1" >/dev/null;} #path or device
+        isPathMounted() { findmnt -rno        TARGET "$1" >/dev/null;} #path only
+
+        if isPathMounted "/opt/backups";      #Spaces in path names are ok.
+        then
+            msg_box "/opt/backups ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
+            exit 1
+        fi
+        # Universal:
+        if isMounted "/opt/backups";
+        then
+            msg_box "/opt/backups ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
+            exit 1
+        fi
+
+        # Verzeichnis anlegen:
+        mkdir -p "/opt/backups"
+
+        print_text_in_color "$IGreen" "Directory /opt/backups erfolgreich angelegt."
+
     ;;
     *)
     ;;
@@ -143,10 +164,7 @@ esac
 
 
 #### User anlegen: ####
-
-#### Festplatte für Repo und xfs: ####
-#mkfs.xfs -b size=4096 -m crc=1,reflink=1 /dev/sdb -f
-
+run_script AddUser
 
 
 exit
