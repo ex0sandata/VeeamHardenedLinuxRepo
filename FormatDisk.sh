@@ -5,7 +5,6 @@
 
 true
 SCRIPT_NAME="Festplatte Formatieren"
-MOUNT_="/opt/backups"
 # shellcheck source=lib.sh
 source /var/scripts/lib.sh
 
@@ -128,6 +127,7 @@ format() {
         msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot, \
         damit die Festplatte gemountet werden kann."
     else
+        print_text_in_color "$IRed" "Anscheinend ist etwas schiefgelaufen. $DISKTYPE konnte nicht in /etc/fstab gemountet werden."
     fi
     print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
 
