@@ -114,7 +114,7 @@ format() {
         print_text_in_color "$IPurple" "UUID für die neue Partition: $UUID"
 
         #### in /etc/fstab mounten ####
-        if [ != ${UUID} ] 
+        if [ ${UUID} -lt 1 ] 
         then
             print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
             echo "/dev/disk/by-uuid/$UUID  /opt/backups    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
@@ -130,7 +130,7 @@ format() {
         msg_box "Es scheint, als würde /dev/$DEVTYPE nicht existieren.
         Diese Option erfordert eine zusätzliche Festplatte.
         Bitte fahren Sie diesen Server herunter und installieren Sie eine weitere Festplatte."
-        countdown "Please press 'CTRL+C' to abort this script and shutdown the server with 'sudo poweroff'" "120"
+        countdown "Bitte brechen Sie den Vorgang mit STRG + C ab, und schalten den Server mit dem Command 'sudo poweroff' herunter." "120"
         exit 1
     fi
     
