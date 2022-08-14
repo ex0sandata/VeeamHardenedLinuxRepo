@@ -33,6 +33,7 @@ format() {
 
     # Ask for user input
     while
+        clear
         lsblk
         #lsblk | grep disk | awk '{print $1, $4}' | column -t | 
         read -r -e -p "Speicherort für Veeam-Backupdaten eingeben:" -i "$DEVTYPE" userinput
@@ -107,8 +108,9 @@ format() {
         sleep 0.5
         print_text_in_color "$IBlue" "$DISKTYPE wird mit XFS formattiert..."
         mkfs.xfs -b size=4096 -m crc=1,reflink=1 "$DISKTYPE" -f
-
+        sleep 3 & spinner_loading
         
+        print_text_in_color "$IPurple" "UUID für ${DEVTYPE} wird ermittelt:"
         UUID=$(lsblk -f | grep "${DEVTYPE}" | head -1 | awk '{print $3}')
         print_text_in_color "$IPurple" "UUID für die neue Partition: $UUID"
 
@@ -117,7 +119,7 @@ format() {
             print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
             echo "/dev/disk/by-uuid/$UUID  /opt/backups    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
 
-            msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot, \
+            msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot,
             damit die Festplatte gemountet werden kann."
             print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
         else
