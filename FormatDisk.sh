@@ -110,11 +110,11 @@ format() {
         mkfs.xfs -b size=4096 -m crc=1,reflink=1 "$DISKTYPE" -f
         sleep 3 & spinner_loading
         
-        print_text_in_color "$IPurple" "UUID für ${DEVTYPE} wird ermittelt:"
         UUID=$(lsblk -f | grep "${DEVTYPE}" | head -1 | awk '{print $3}')
         print_text_in_color "$IPurple" "UUID für die neue Partition: $UUID"
 
-        if [ != $(echo $UUID) ] 
+        #### in /etc/fstab mounten ####
+        if [ != ${UUID} ] 
         then
             print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
             echo "/dev/disk/by-uuid/$UUID  /opt/backups    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
@@ -133,9 +133,6 @@ format() {
         countdown "Please press 'CTRL+C' to abort this script and shutdown the server with 'sudo poweroff'" "120"
         exit 1
     fi
-
-    #### in /etc/fstab mounten ####
-    
     
 
 }
