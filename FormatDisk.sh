@@ -36,7 +36,7 @@ format() {
         clear
         lsblk
         #lsblk | grep disk | awk '{print $1, $4}' | column -t | 
-        read -r -e -p "Speicherort für Veeam-Backupdaten eingeben:" -i "$DEVTYPE" userinput
+        read -r -e -p "Speicherort für Veeam-Backupdaten eingeben: " -i "$DEVTYPE" userinput
         userinput=$(echo "$userinput" | awk '{print $1}')
             for disk in "${AVAILABLEDEVICES[@]}";
             do
@@ -114,7 +114,7 @@ format() {
         print_text_in_color "$IPurple" "UUID für die neue Partition: $UUID"
 
         #### in /etc/fstab mounten ####
-        if [ ${UUID} -lt 1 ] 
+        if [ ${UUID} != 0 ] 
         then
             print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
             echo "/dev/disk/by-uuid/$UUID  /opt/backups    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
