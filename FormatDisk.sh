@@ -107,7 +107,22 @@ format() {
         sleep 0.5
         print_text_in_color "$IBlue" "$DISKTYPE wird mit XFS formattiert..."
         mkfs.xfs -b size=4096 -m crc=1,reflink=1 "$DISKTYPE" -f
+
         
+        UUID=$(lsblk -f | grep "${DEVTYPE}" | head -1 | awk '{print $3}')
+        print_text_in_color "$IPurple" "UUID für die neue Partition: $UUID"
+
+        if [ != $(echo $UUID) ] 
+        then
+            print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
+            echo "/dev/disk/by-uuid/$UUID  /opt/backups    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
+
+            msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot, \
+            damit die Festplatte gemountet werden kann."
+            print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
+        else
+            print_text_in_color "$IRed" "Anscheinend ist etwas schiefgelaufen. $DISKTYPE konnte nicht in /etc/fstab gemountet werden."
+        fi
 
     else
         msg_box "Es scheint, als würde /dev/$DEVTYPE nicht existieren.
@@ -118,18 +133,8 @@ format() {
     fi
 
     #### in /etc/fstab mounten ####
-    UUID=$(lsblk -f | grep "${DEVTYPE}" | head -1 | awk '{print $3}')
-    if [ $(echo $UUID) != /dev/null ] 
-    then
-        print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
-        echo "/dev/disk/by-uuid/$UUID  /opt/backups    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
-
-        msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot, \
-        damit die Festplatte gemountet werden kann."
-    else
-        print_text_in_color "$IRed" "Anscheinend ist etwas schiefgelaufen. $DISKTYPE konnte nicht in /etc/fstab gemountet werden."
-    fi
-    print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
+    
+    
 
 }
 
