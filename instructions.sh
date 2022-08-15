@@ -2,10 +2,6 @@
 
 # Silas Suessmilch © - 2022
 
-BIGreen='\e[1;92m'      # Green
-IGreen='\e[0;92m'       # Green
-Color_Off='\e[0m'       # Text Reset
-
 clear
 cat << INST1
 +-----------------------------------------------------------------------+
