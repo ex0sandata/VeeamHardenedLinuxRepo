@@ -40,7 +40,7 @@ then
     mkdir /var/scripts
 fi
 
-rm -rf /var/scripts
+rm -f /var/scripts/*.sh
 mkdir /var/scripts
 
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh -s > /var/scripts/lib.sh 
