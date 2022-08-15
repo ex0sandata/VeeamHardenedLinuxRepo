@@ -13,19 +13,27 @@ cat << INST1
 |                 Veeam Hardened Linux Repositories!                    |
 |                                                                       |
 INST1
-echo -e "|"  "${IGreen} Um dieses Skript zu starten, bitte geben sie das sudo- Passwort ein: [ENTER].${Color_Off} |"
-# echo -e "|"  "${IGreen}: ${BIGreen}nextcloud${IGreen}${Color_Off}                             |"
-cat << INST2
-|                                                                       |
-|                                                                       |
-| Optional:                                                             |
-| Sie können den Server auch via SSH-Session einrichten. Windows        |
-| unterstützt dieses Feature seit v.1809 nativ auf Konsolen (cmd / PS)  |
-| Sie können sich wie folgt verbinden: ssh $UNIXUSER@IP-Adresse         |
-|                                                                       |
-|                                                                       |
-|  ###################### Silas Suessmilch - SanData GmbH - $(date +"%Y") ######################  |
-+-----------------------------------------------------------------------+
+echo "|                                                                       |"
+echo "|                    Um mit der Einrichtung zu starten,                 |"
+echo "|                  bestätigen Sie bitte die Eingabe mit y/n.            |"
+read -p "Fortfahren(y/n)?" CONT
+if [ "$CONT" = "y" ]; then
+    cat << INST2
+    |                                                                       |
+    | Optional:                                                             |
+    | Sie können den Server auch via SSH-Session einrichten. Windows        |
+    | unterstützt dieses Feature seit v.1809 nativ auf Konsolen (cmd / PS)  |
+    | Sie können sich wie folgt verbinden: ssh $UNIXUSER@IP-Adresse         |
+    |                                                                       |
+    |                                                                       |
+    |  ###################### Silas Suessmilch - SanData GmbH - $(date +"%Y") ######################  |
+    +-----------------------------------------------------------------------+
 INST2
+else
+    exit 0
+fi
+
+
+
 
 exit 0
