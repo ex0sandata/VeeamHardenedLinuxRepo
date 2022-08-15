@@ -34,11 +34,6 @@ else
     apt-get install curl -y
 fi
 
-true
-SCRIPT_NAME="Veeam Hardened Linux Repository Installation Skript"
-SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repository."
-   
-
 # shellcheck source=lib.sh
 if [ ! -d /var/scripts ]
 then
@@ -50,18 +45,25 @@ then
     rm -rf /var/scripts
     mkdir /var/scripts
 else
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh --output /var/scripts/lib.sh 
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh --output /var/scripts/FormatDisk.sh
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh --output /var/scripts/fetch_lib.sh
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh --output /var/scripts/SetupHardenedLinuxRepo.sh
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh --output /var/scripts/AddUser.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh -s --output /var/scripts/lib.sh 
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh -s --output /var/scripts/FormatDisk.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh -s --output /var/scripts/fetch_lib.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh -s --output /var/scripts/SetupHardenedLinuxRepo.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh -s --output /var/scripts/AddUser.sh
+    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/instructions.sh -s --output /var/scripts/instructions.sh
 
     chmod +x /var/scripts/*.sh
 fi
 
-
 #### Start:
 source /var/scripts/lib.sh
+
+run_script instructions
+
+true
+SCRIPT_NAME="Veeam Hardened Linux Repository Installation Skript"
+SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repository."
+   
 
 print_text_in_color "$BIPurple" "Generiere locale für aktuelle session...."
 install_if_not locales
