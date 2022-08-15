@@ -40,20 +40,18 @@ then
     mkdir /var/scripts
 fi
 
-if [ -z /var/scripts ]
-then
-    rm -rf /var/scripts
-    mkdir /var/scripts
-else
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh -s --output /var/scripts/lib.sh 
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh -s --output /var/scripts/FormatDisk.sh
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh -s --output /var/scripts/fetch_lib.sh
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh -s --output /var/scripts/SetupHardenedLinuxRepo.sh
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh -s --output /var/scripts/AddUser.sh
-    curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/instructions.sh -s --output /var/scripts/instructions.sh
+rm -rf /var/scripts
+mkdir /var/scripts
 
-    chmod +x /var/scripts/*.sh
-fi
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh -s --output /var/scripts/lib.sh 
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh -s --output /var/scripts/FormatDisk.sh
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh -s --output /var/scripts/fetch_lib.sh
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh -s --output /var/scripts/SetupHardenedLinuxRepo.sh
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh -s --output /var/scripts/AddUser.sh
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/instructions.sh -s --output /var/scripts/instructions.sh
+
+chmod +x /var/scripts/*.sh
+
 
 #### Start:
 source /var/scripts/lib.sh
