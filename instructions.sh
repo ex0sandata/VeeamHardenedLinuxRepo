@@ -12,9 +12,9 @@ INST1
 echo "|                                                                       |"
 echo "|                    Um mit der Einrichtung zu starten,                 |"
 echo "|                  bestätigen Sie bitte die Eingabe mit y/n.            |"
-echo "|                                                                       |" CONT
+echo "|                                                                       |"
 read -p "|                           Fortfahren(y/n)?                            |" CONT
-echo "|                                                                       |" CONT
+echo "|                                                                       |"
 if [ "$CONT" = "y" ]; then
 cat << INST2
 |                                                                       |
@@ -30,8 +30,5 @@ INST2
 else
     exit 1 && break
 fi
-
-
-
 
 exit 0
