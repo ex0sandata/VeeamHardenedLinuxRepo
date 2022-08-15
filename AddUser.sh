@@ -31,7 +31,7 @@ then
         sudo -u "$NEWUSER" sudo bash "$1"
 
         print_text_in_color "$IGreen" "Verzeichnis /opt/backups auf $NEWUSER berechtigt"
-        chown -R "$NEWUSER" /opt/backups 
+        chown -R "$NEWUSER":VeeamBR /opt/backups 
         chmod 770 /opt/backups
     fi
 fi
