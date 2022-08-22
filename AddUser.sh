@@ -65,7 +65,7 @@ Dieses MUSS ein starkes Passwort sein!"
         fi
 
         ROOT_PASSWORD=$(input_box_flow "Bitte ein neues Passwort eingeben:")
-        if [[ $(expr length "$ROOT_PASSWORD" -lt 15 ]]
+        if [[ $(expr length "$ROOT_PASSWORD") -lt 15 ]]
         then
             msg_box "Das Passwort muss mindestens 15 Zeichen besitzen."
         else
@@ -82,5 +82,7 @@ msg_box "Dieser Server ist nun fertig eingerichtet. Bitte notieren Sie folgende 
 eingeben müssen, um den Server zu verbinden: \
 
 
-Eine Anleitung mit Bildern zur Einrichtung in der Konsole 
+Eine Anleitung mit Bildern zur Einrichtung in der Konsole finden Sie hier:
+### LINK ###
 "
+exit 0
