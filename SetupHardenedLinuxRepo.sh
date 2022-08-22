@@ -40,12 +40,11 @@ then
     mkdir /var/scripts
 fi
 
-rm -f /var/scripts/*.sh
+rm -f /var/scripts
 mkdir /var/scripts
 
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh -s > /var/scripts/lib.sh 
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh -s > /var/scripts/FormatDisk.sh
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/fetch_lib.sh -s > /var/scripts/fetch_lib.sh
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh -s > /var/scripts/SetupHardenedLinuxRepo.sh
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh -s > /var/scripts/AddUser.sh
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/instructions.sh -s > /var/scripts/instructions.sh
