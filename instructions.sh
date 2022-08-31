@@ -25,7 +25,7 @@ auf Konsolen (cmd / PS). Sie können sich wie folgt verbinden: ssh $UNIXUSER@$AD
             rm -f $CONFIG
         fi
         touch $CONFIG
-        echo "###### In dieser Textdatei stehen alle vorgenommenen Konfigurationen für das Veeam Hardened Linux Repository ###### \n" >> $CONFIG
+        echo -e "###### In dieser Textdatei stehen alle vorgenommenen Konfigurationen für das Veeam Hardened Linux Repository ###### \n" >> $CONFIG
 
     else
         print_text_in_color "$IRed" "Abbruch..."
