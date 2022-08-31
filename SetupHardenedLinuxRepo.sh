@@ -34,12 +34,6 @@ else
     apt-get install curl -y
 fi
 
-# shellcheck source=lib.sh
-if [ ! -d /var/scripts ]
-then
-    mkdir /var/scripts
-fi
-
 rm -rf /var/scripts
 mkdir /var/scripts
 
@@ -122,7 +116,7 @@ Bei dieser Option mit einer Festplatte kann kein XFS verwendet werden!!
 "Wie sollen die Festplatten formattiert werden?
 $MENU_GUIDE" "$WT_HEIGHT" "$WT_WIDTH" 4 \
 "2 Festplatten" "(Wird automatisch konfiguriert)" \
-"1 Festplatte" "(Backups werden auf dieser Platte gemacht auf /opt/backups (KEIN XFS!!))" 3>&1 1>&2 2>&3)
+"1 Festplatte" "(Backups werden auf dieser Platte gemacht auf $BACKUPDIR (KEIN XFS!!))" 3>&1 1>&2 2>&3)
 
 case "$choice" in
     "2 Festplatten")
@@ -139,22 +133,22 @@ case "$choice" in
         isMounted() { findmnt -rno SOURCE,TARGET "$1" >/dev/null;} #path or device
         isPathMounted() { findmnt -rno        TARGET "$1" >/dev/null;} #path only
 
-        if isPathMounted "/opt/backups";      #Spaces in path names are ok.
+        if isPathMounted "$BACKUPDIR";      #Spaces in path names are ok.
         then
-            msg_box "/opt/backups ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
+            msg_box "$BACKUPDIR ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
             exit 1
         fi
         # Universal:
-        if isMounted "/opt/backups";
+        if isMounted "$BACKUPDIR";
         then
-            msg_box "/opt/backups ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
+            msg_box "$BACKUPDIR ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
             exit 1
         fi
 
         # Verzeichnis anlegen:
-        mkdir -p "/opt/backups"
+        mkdir -p "$BACKUPDIR"
 
-        print_text_in_color "$IGreen" "Directory /opt/backups erfolgreich angelegt."
+        print_text_in_color "$IGreen" "Directory $BACKUPDIR erfolgreich angelegt."
 
     ;;
     *)
@@ -165,5 +159,15 @@ esac
 #### User anlegen: ####
 run_script AddUser
 
+
+msg_box "Dieser Server ist nun fertig eingerichtet. Bitte notieren Sie folgende Daten, die Sie in der Veeam Konsole 
+eingeben müssen, um den Server zu verbinden: \
+
+
+Eine Anleitung mit Bildern zur Einrichtung in der Konsole finden Sie hier:
+### LINK ###
+"
+
+#### Request Reboot: ####
 
 exit
