@@ -13,7 +13,7 @@ Der aktuelle User ist: $UNIXUSER.
 Dieses Skript erstellt einen neuen User, der auf das Backupverzeichnis zugreifen darf.
 Der User wird keine anderen Rechte besitzen."
 
-if yesno_box_yes "Sollen der User 'veeam' automatisch angelegt und konfiguriert werden? 
+if yesno_box_yes "Soll der User 'veeam' automatisch angelegt und konfiguriert werden? 
 Der User 'root' bekommt aus Sicherheitsgründen ein Starkes Passwort, welches zur Ersteinrichtung eingegeben werden muss,
 danach wird der Account 'root' aus Sicherheitsgründen deaktiviert."
 then
@@ -71,18 +71,20 @@ else
         if echo "veeam:$VEEAMPASSWD" | sudo chpasswd
         then
             msg_box "Das Passwort für den User 'veeam' ist nun '$VEEAMPASSWD'. Dieses Passwort muss in der Veeam Konsole später eingegeben werden. \n Das Passwort ist ebenfalls in der Textdatei $CONFIG gespeichert."
-            echo "Das Passwort für den User Veeam ist:      $VEEAMPASSWD" >> $CONFIG
-            echo "Dieses Passwort muss in der Veeam Konsole für die 'Single-Use Credentials' eingegeben werden" >> $CONFIG
+            echo -e "Das Passwort für den User 'veeam' ist:\n$VEEAMPASSWD" >> $CONFIG
+            echo "Dieses Passwort muss in der Konsole für die 'Single-Use Credentials' des Standard-Benutzers eingegeben werden". >> $CONFIG
         fi      
     
     fi
 
 fi
 
-    if [ echo $(passwd -a -S | grep root | awk '{print $2}') != "P"  ]
+    if [ $(passwd -a -S | grep root | awk '{print $2}') != "P"  ]
     then
         passwd -u root
+        print_text_in_color "$IRed" "Account Root wurde entsperrt"
     fi
+        print_text_in_color "$IGreen" "Check für Sperre auf Root-Account bestanden"
 
     print_text_in_color "$IPurple" "Generiere Passwort für root...."
     #random password generator
@@ -90,8 +92,8 @@ fi
 
     if echo "root:$ROOTPASSWD" | sudo chpasswd
     then
-        echo "Das Passwort für den User Root ist:          $ROOTPASSWD" >> $CONFIG
-        echo "Dieses Passwort muss in der Root Konsole für die 'Single-Use Credentials' des Root-Benutzers eingegeben werden" >> $CONFIG
+        echo -e "Das Passwort für den User 'root' ist:\n $ROOTPASSWD" >> $CONFIG
+        echo "Dieses Passwort muss in der Konsole für die 'Single-Use Credentials' des Root-Benutzers eingegeben werden" >> $CONFIG
     fi
 
 exit 0
