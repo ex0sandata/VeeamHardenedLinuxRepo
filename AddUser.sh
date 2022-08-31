@@ -8,81 +8,90 @@ source /var/scripts/lib.sh
 ### Change passwords
 UNIXUSER=$(whoami)
 
-if [[ $UNIXUSER != "veeam" ]]
-then
-    msg_box "Veeam empfiehlt einen neuen User anzulegen, der keine sudo- Rechte besitzt.
-    Der aktuelle User ist: $UNIXUSER.
-    Dieses Skript erstellt einen neuen User, der auf das Backupverzeichnis zugreifen darf.
-    Der User darf keine sudo- Rechte haben!"
+msg_box "Veeam empfiehlt einen neuen User anzulegen, der keine sudo- Rechte besitzt.
+Der aktuelle User ist: $UNIXUSER.
+Dieses Skript erstellt einen neuen User, der auf das Backupverzeichnis zugreifen darf.
+Der User wird keine anderen Rechte besitzen."
 
-    if ! yesno_box_yes "Soll ein neuer User erstellt werden?"
+if yesno_box_yes "Sollen der User 'veeam' automatisch angelegt und konfiguriert werden? 
+Der User 'root' bekommt aus Sicherheitsgründen ein Starkes Passwort, welches zur Ersteinrichtung eingegeben werden muss,
+danach wird der Account 'root' aus Sicherheitsgründen deaktiviert."
+then
+    
+    print_text_in_color "$IGreen" "User 'veeam' wird automatisch angelegt..."
+    useradd veeam
+    useradd -b $BACKUPDIR -d $BACKUPDIR -s /bin/bash "$veeam"
+    
+    print_text_in_color "$IGreen" "Neuer User mit dem Namen veeam angelegt"
+    groupadd VeeamBR
+    usermod -G VeeamBR veeam
+    
+    print_text_in_color "$IGreen" "Verzeichnis $BACKUPDIR auf 'veeam' berechtigt"
+    chown -R veeam:VeeamBR $BACKUPDIR 
+    chmod 770 $BACKUPDIR
+
+    print_text_in_color "$IPurple" "Generiere Passwort...."
+    #random password generator
+    VEEAMPASSWD=$(openssl rand -base64 20)
+
+    if echo "veeam:$VEEAMPASSWD" | sudo chpasswd
     then
-        print_text_in_color "$ICyan" "Not adding another user..."
-        sleep 1
-    else
+        echo "Das Passwort für den User Veeam ist:          $VEEAMPASSWD" >> $CONFIG
+        echo "Dieses Passwort muss in der Veeam Konsole für die 'Single-Use Credentials' eingegeben werden" >> $CONFIG
+    fi
+else
+
+    if [[ $UNIXUSER != "veeam" ]]
+    then
+
+        print_text_in_color "$IGreen" "Neuer User 'veeam' wird erstellt..." 
         useradd veeam
-        useradd -b /opt/backups -d /home/backups -s /bin/bash "$veeam"
+        useradd -b $BACKUPDIR -d $BACKUPDIR -s /bin/bash "$veeam"
         
         print_text_in_color "$IGreen" "Neuer User mit dem Namen veeam angelegt"
         groupadd VeeamBR
         usermod -G VeeamBR veeam
         
-        print_text_in_color "$IGreen" "Verzeichnis /opt/backups auf 'veeam' berechtigt"
-        chown -R veeam:VeeamBR /opt/backups 
-        chmod 770 /opt/backups
+        print_text_in_color "$IGreen" "Verzeichnis $BACKUPDIR auf 'veeam' berechtigt"
+        chown -R veeam:VeeamBR $BACKUPDIR 
+        chmod 770 $BACKUPDIR
 
         msg_box "Bitte wählen Sie ein starkes Passwort für den neuen User 'veeam'"
         while :
         do
-            UNIX_PASSWORD=$(input_box_flow "Bitte ein neues Passwort eingeben:")
-            if [[ "$UNIX_PASSWORD" == *" "* ]]
+            VEEAMPASSWD=$(input_box_flow "Bitte ein neues Passwort eingeben:")
+            if [[ "$VEEAMPASSWD" == *" "* ]]
             then
-                msg_box "Bitte keine Leerzeichen benutzen."
+                msg_box "Das Passwort darf keine Leerzeichen enthalten."
             else
                 break
             fi
         done
 
-        if echo "veeam:$UNIX_PASSWORD" | sudo chpasswd
+        if echo "veeam:$VEEAMPASSWD" | sudo chpasswd
         then
-            msg_box "Das Passwort für den User 'veeam' ist nun '$UNIX_PASSWORD'. Dieses Passwort muss in der Veeam Konsole später eingegeben werden."
+            msg_box "Das Passwort für den User 'veeam' ist nun '$VEEAMPASSWD'. Dieses Passwort muss in der Veeam Konsole später eingegeben werden. \n Das Passwort ist ebenfalls in der Textdatei $CONFIG gespeichert."
+            echo "Das Passwort für den User Veeam ist:      $VEEAMPASSWD" >> $CONFIG
+            echo "Dieses Passwort muss in der Veeam Konsole für die 'Single-Use Credentials' eingegeben werden" >> $CONFIG
         fi      
-
+    
     fi
+
 fi
 
-
-msg_box "Für die einmalige Einrichtung dieses Servers in der Veeam Konsole muss das Root Passwort festgelegt werden.
-Dieses MUSS ein starkes Passwort sein!"
-    while :
-    do
-        ROOT_PASSWORD=$(input_box_flow "Bitte ein neues Passwort eingeben:")
-        if [[ "$ROOT_PASSWORD" == *" "* ]]
-        then
-            msg_box "Bitte keine Leerzeichen benutzen."
-        else
-            break
-        fi
-
-        ROOT_PASSWORD=$(input_box_flow "Bitte ein neues Passwort eingeben:")
-        if [[ $(expr length "$ROOT_PASSWORD") -lt 15 ]]
-        then
-            msg_box "Das Passwort muss mindestens 15 Zeichen besitzen."
-        else
-            break
-        fi
-    done
-    
-    if echo "root:$ROOT_PASSWORD" | sudo chpasswd
+    if [ echo $(passwd -a -S | grep root | awk '{print $2}') != "P"  ]
     then
-        msg_box "Das Passwort für den User 'root' ist nun '$ROOT_PASSWORD'. Dieses Passwort muss in der Veeam Konsole später eingegeben werden."
+        passwd -u root
     fi
 
-msg_box "Dieser Server ist nun fertig eingerichtet. Bitte notieren Sie folgende Daten, die Sie in der Veeam Konsole 
-eingeben müssen, um den Server zu verbinden: \
+    print_text_in_color "$IPurple" "Generiere Passwort für root...."
+    #random password generator
+    ROOTPASSWD=$(openssl rand -base64 31)
 
+    if echo "root:$ROOTPASSWD" | sudo chpasswd
+    then
+        echo "Das Passwort für den User Root ist:          $ROOTPASSWD" >> $CONFIG
+        echo "Dieses Passwort muss in der Root Konsole für die 'Single-Use Credentials' des Root-Benutzers eingegeben werden" >> $CONFIG
+    fi
 
-Eine Anleitung mit Bildern zur Einrichtung in der Konsole finden Sie hier:
-### LINK ###
-"
 exit 0
