@@ -159,15 +159,43 @@ esac
 #### User anlegen: ####
 run_script AddUser
 
+#### Veeam B&R Einrichtung Konsole ####
+msg_box "Die Grundkonfiguration ist nun fertig eingerichtet. Bitte geben Sie nun die Daten folgenden Seiten in der Veeam Konsole ein, um diesen Server zu verbinden."
 
-msg_box "Dieser Server ist nun fertig eingerichtet. Bitte notieren Sie folgende Daten, die Sie in der Veeam Konsole 
-eingeben müssen, um den Server zu verbinden: \
-
-
+msg_box "Die Konfigurationsdaten sind in dieser Datei gespeichert: $CONFIG
 Eine Anleitung mit Bildern zur Einrichtung in der Konsole finden Sie hier:
 ### LINK ###
 "
+msg_box "Letzter Hinweis: Sobald sie die den Server erfolgreich verbunden haben, wird das Root-Konto aus Sicherheitsgründen wieder deaktiviert.
+Falls das Root-Konto doch entsperrt werden sollte, führen Sie bitte diesen Command aus: 
+'sudo unlock-root'"
+
+echo -e "#/bin/bash\n passwd -u root" >> /usr/bin/unlock-root && chmod +x /usr/bin/unlock-root
+
+function readcreds (){
+    CREDENTIALS=$()    
+    while :
+    do 
+        if yesno_box_no "War die Einrichtung erfolgreich?"
+        then
+            msg_box "$CREDENTIALS"
+        else
+            break
+        fi
+    done
+      
+}
+readcreds
+
+#### Server Hardening Options: ####
+
+
 
 #### Request Reboot: ####
+if [ $REQUEST = 1 ]
+then
+    msg_box "Dieser Server wird jetzt neu gestartet, um den Mountpoint in /etc/fstab zu schreiben.
+Sobald der Neustart erfolgt ist, ist der Server fertig eingerichtet"
+fi
 
 exit
