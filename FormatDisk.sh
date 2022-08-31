@@ -23,7 +23,7 @@ format() {
     umount /mnt/* &> /dev/null
 
     # mkdir if not existing
-    mkdir -p "/opt/backups"
+    mkdir -p "$BACKUPDIR"
 
     msg_box "Sie werden nun eine Liste von Geräten sehen, auf welchen das Backupverzeichnis angelegt werden soll:
     Achtung! Alle Daten auf dieser Platte werden gelöscht werden!"
@@ -34,8 +34,7 @@ format() {
     # Ask for user input
     while
         clear
-        lsblk
-        #lsblk | grep disk | awk '{print $1, $4}' | column -t | 
+        lsblk -de 7
         read -r -e -p "Speicherort für Veeam-Backupdaten eingeben: " -i "$DEVTYPE" userinput
         userinput=$(echo "$userinput" | awk '{print $1}')
             for disk in "${AVAILABLEDEVICES[@]}";
@@ -72,9 +71,9 @@ format() {
     isDevMounted() { findmnt -rno SOURCE        "$1" >/dev/null;} #device only
     isPathMounted() { findmnt -rno        TARGET "$1" >/dev/null;} #path   only
 
-    if isPathMounted "/opt/backups";      #Spaces in path names are ok.
+    if isPathMounted "$BACKUPDIR";      #Spaces in path names are ok.
     then
-        msg_box "/opt/backups ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
+        msg_box "$BACKUPDIR ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
         exit 1
     fi
 
@@ -85,9 +84,9 @@ format() {
     fi
 
     # Universal:
-    if isMounted "/opt/backups";
+    if isMounted "$BACKUPDIR";
     then
-        msg_box "/opt/backups ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
+        msg_box "$BACKUPDIR ist im Moment gemountet und muss unmountet werden, um dieses Skript auszuführen."
         exit 1
     fi
 
@@ -117,13 +116,23 @@ format() {
         if [ ${UUID} != 0 ] 
         then
             print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
-            echo "/dev/disk/by-uuid/$UUID  /opt/backups    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
+            echo "/dev/disk/by-uuid/$UUID  $BACKUPDIR    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
 
             msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot,
-            damit die Festplatte gemountet werden kann."
+            damit die Festplatte gemountet werden kann. Bis der Server neu gestartet wird, wird das Verzeichnis temporär gemountet."
             print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
+            mount /dev/disk/by-uuid/$UUID $BACKUPDIR
+
+            if [ $(df -h /opt | awk '{print $1}' | sed -n '2p') == $DISKTYPE ]
+            then
+                print_text_in_color "$IGreen" "Temporärer Mount erfolgreich!"
+            else
+                print_text_in_color "$IRed" "Anscheinend ist etwas schiefgelaufen. $DISKTYPE konnte nicht temporär gemountet werden."
+                exit 1
+            fi
         else
             print_text_in_color "$IRed" "Anscheinend ist etwas schiefgelaufen. $DISKTYPE konnte nicht in /etc/fstab gemountet werden."
+            exit 1
         fi
 
     else
