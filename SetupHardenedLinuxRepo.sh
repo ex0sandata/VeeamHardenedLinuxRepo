@@ -42,6 +42,8 @@ curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/Fo
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh -s > /var/scripts/SetupHardenedLinuxRepo.sh
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh -s > /var/scripts/AddUser.sh
 curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/instructions.sh -s > /var/scripts/instructions.sh
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/hardening.sh -s > /var/scripts/hardening.sh
+curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/static_ip.sh -s > /var/scripts/static_ip.sh
 
 chmod +x /var/scripts/*.sh
 
@@ -56,7 +58,7 @@ SCRIPT_NAME="Veeam Hardened Linux Repository Installation Skript"
 SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repository."
    
 
-print_text_in_color "$BIPurple" "Generiere locale für aktuelle session...."
+print_text_in_color "$BIPurple" "Generiere locale für aktuelle Session...."
 install_if_not locales
 locale-gen en_US.UTF-8
 sleep 2
@@ -157,39 +159,62 @@ esac
 
 
 #### User anlegen: ####
+
 run_script AddUser
 
+#### Statische IP-Adresse anlegen: ####
+
+if yesno_box_yes "Soll eine andere IP-Adresse für diesen Server konfiguriert werden?"
+then
+    run_script static_ip
+fi
+
+#### Server Hardening Options: ####
+
+if yesno_box_yes "Soll ein Hardening für diesen Server durchgeführt werden? Wenn Sie mit 'yes' bestätigen, können Sie zwischen verschiedenen Optionen wählen."
+then
+    run_script hardening
+else
+    echo -e "Der SSH-Port für den Server ist: $SSHPORT" >> $CONFIG
+fi
+
 #### Veeam B&R Einrichtung Konsole ####
-msg_box "Die Grundkonfiguration ist nun fertig eingerichtet. Bitte geben Sie nun die Daten folgenden Seiten in der Veeam Konsole ein, um diesen Server zu verbinden."
 
-msg_box "Die Konfigurationsdaten sind in dieser Datei gespeichert: $CONFIG
-Eine Anleitung mit Bildern zur Einrichtung in der Konsole finden Sie hier:
-### LINK ###
-"
-msg_box "Letzter Hinweis: Sobald sie die den Server erfolgreich verbunden haben, wird das Root-Konto aus Sicherheitsgründen wieder deaktiviert.
-Falls das Root-Konto doch entsperrt werden sollte, führen Sie bitte diesen Command aus: 
-'sudo unlock-root'"
+function brsetup (){
+    msg_box "Die Konfiguration ist nun fertig. Bitte geben Sie nun die Daten folgenden Seiten in der Veeam Konsole ein, um diesen Server zu verbinden."
 
-echo -e "#/bin/bash\n passwd -u root" >> /usr/bin/unlock-root && chmod +x /usr/bin/unlock-root
+    msg_box "Die Konfigurationsdaten sind in dieser Datei gespeichert: $CONFIG
+    Eine Anleitung mit Bildern zur Einrichtung in der Konsole finden Sie hier:
+    ### LINK ###
+    "
+    msg_box "Letzter Hinweis: Sobald sie die den Server erfolgreich verbunden haben, wird das Root-Konto aus Sicherheitsgründen wieder deaktiviert.
+    Falls das Root-Konto doch entsperrt werden sollte, führen Sie bitte diesen Command aus: 
+    'sudo unlock-root'"
+
+-->    msg_box "$VEEAMUSERNAME $VEEAMPASSWD $VEEAMPORT $ROOTUSERNAME $ROOTPASSWD"
+
+    if [ ! -f /usr/bin/unlock-root ]
+    then
+        echo -e "#/bin/bash\n passwd -u root \n source /var/scripts/lib.sh\n disableroot" >> /usr/bin/unlock-root && chmod +x /usr/bin/unlock-root
+    fi
+}
 
 function readcreds (){
-    CREDENTIALS=$()    
+    brsetup
     while :
     do 
-        if yesno_box_no "War die Einrichtung erfolgreich?"
+        if yesno_box_no "War die Einrichtung erfolgreich? Wenn Sie mit 'nein' bestätigen, werden die Credentials noch einmal angezeigt."
         then
-            msg_box "$CREDENTIALS"
+            brsetup
         else
+            passwd -l root
+            enableroot
             break
         fi
     done
       
 }
 readcreds
-
-#### Server Hardening Options: ####
-
-
 
 #### Request Reboot: ####
 if [ $REQUEST = 1 ]
