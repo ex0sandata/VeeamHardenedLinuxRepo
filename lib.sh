@@ -8,12 +8,16 @@ SYSVENDOR=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
 ISSUES="https://github.com/ex0sandata/veeamhardenedlinuxrepo/issues"
 SCRIPTS=/var/scripts
 BACKUPDIR=/opt
+CONFIG=/root/VHLR.txt
+REQUEST=0
+USER=$(sudo who --count | awk '{print $1 }')
+REALUSER=$(echo "${USER//#}")
 
 # Ubuntu OS
 DISTRO=$(lsb_release -sr)
 CODENAME=$(lsb_release -sc)
 KEYBOARD_LAYOUT=$(localectl status | grep "Layout" | awk '{print $3}')
-CONFIG=/root/VHLR.txt
+
 
 function spinner_loading() {
     printf '['
@@ -47,12 +51,12 @@ function print_text_in_color() {
     printf "%b%s%b\n" "$1" "$2" "$Color_Off"
 }
 
-if [[ $EUID -ne 0 ]]; then
-    set -e
-    print_text_in_color "$IRed" "Skript nicht als sudo / root ausgeführt, bitte Passwort eingeben:"
-    sudo "$0"
-    exit $?
-fi
+# if [[ $EUID -ne 0 ]]; then
+#     set -e
+#     print_text_in_color "$IRed" "Skript nicht als sudo / root ausgeführt, bitte Passwort eingeben:"
+#     sudo "$0"
+#     exit $?
+# fi
 
 function msg_box() {
     [ -n "$2" ] && local SUBTITLE=" - $2"
@@ -72,7 +76,7 @@ function input_box_flow() {
         RESULT=$(input_box "$1" "$2")
         if [ -z "$RESULT" ]
         then
-            msg_box "Input is empty, bitte erneut versuchen." "$2"
+            msg_box "Input ist Leer, bitte erneut versuchen." "$2"
         elif ! yesno_box_yes "Ist das korrekt? $RESULT" "$2"
         then
             msg_box "OK, bitte erneut versuchen." "$2"
@@ -82,9 +86,6 @@ function input_box_flow() {
     done
     echo "$RESULT"
 }
-
-
-
 
 function download_script() {
     rm -rf /var/scripts
@@ -103,6 +104,24 @@ function run_script() {
     fi
 }
 
+function any_key() {
+    local PROMPT="$1"
+    read -r -sn 1 -p "$(printf "%b" "${IGreen}${PROMPT}${Color_Off}")";echo
+}
+
+function disableroot(){ 
+    if [ grep -q 'root\:\/bin\/bash' /etc/passwd ]
+    then
+        sed -i 's|root\:\/bin\/bash|root\:\/usr\/sbin\/nologin|' /etc/passwd           
+    fi
+}
+
+function enableroot(){
+    if [ grep -q 'root\:\/usr\/sbin\/nologin' /etc/passwd ]
+    then
+        sed -i 's|root\:\/usr\/sbin\/nologin|root\:\/bin\/bash|' /etc/passwd
+    fi
+}
 
 #### requirement check für veeam: 2 Cores, 4GB RAM, 64Bit-OS ####
 function requirement_failed (){
@@ -252,6 +271,35 @@ function install_popup() {
     then
         print_text_in_color "$ICyan" "Installing $1..."
     else
+        if [ -z "$2" ] || [ "$2" = "exit" ]
+        then
+            exit 1
+        elif [ "$2" = "sleep" ]
+        then
+            sleep 1
+        elif [ "$2" = "return" ]
+        then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+}
+
+function reinstall_remove_menu() {
+    REINSTALL_REMOVE=$(whiptail --title "$TITLE" --menu \
+"Es scheint, als wäre $1 schon installiert.\nBite entscheiden Sie, was zu tun ist.
+$MENU_GUIDE\n" "$WT_HEIGHT" "$WT_WIDTH" 4 \
+"Reinstall" " $1" \
+"Uninstall" " $1" 3>&1 1>&2 2>&3)
+    if [ "$REINSTALL_REMOVE" = "Reinstall" ]
+    then
+        print_text_in_color "$ICyan" "Reinstalling $1..."
+    elif [ "$REINSTALL_REMOVE" = "Uninstall" ]
+    then
+        print_text_in_color "$ICyan" "Uninstalling $1..."
+    elif [ -z "$REINSTALL_REMOVE" ]
+    then
         if [ -z "$2" ] || [ "$2" = "exit" ]
         then
             exit 1
