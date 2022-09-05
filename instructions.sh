@@ -6,14 +6,13 @@ clear
 
 #### Start:
 source /var/scripts/lib.sh
-UNIXUSER=$(whoami)
 ADDRESS=$(hostname -I | cut -d ' ' -f 1)
 
 msg_box "Willkommen bei der Erstinstallation eines Veeam Hardened Linux Repositories! 
 
 Optional:                                                           
 Sie können den Server auch via SSH-Session einrichten. Windows unterstützt dieses Feature seit v.1809 nativ
-auf Konsolen (cmd / PS). Sie können sich wie folgt verbinden: ssh $UNIXUSER@$ADDRESS"
+auf Konsolen (cmd / PS). Sie können sich wie folgt verbinden: ssh $REALUSER@$ADDRESS"
     if yesno_box_yes "Möchten Sie mit der Einrichtung fortfahren(y/n)?"
     then
         print_text_in_color "$IGreen" "Setup wird gestartet.."
