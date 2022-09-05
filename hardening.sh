@@ -248,11 +248,11 @@ function GAuth(){
 }
 
 function PrivKey(){
-
+    continue
 }
 
 function Advantage(){
-
+    continue
 }
 
 # Show a msg_box during the startup script
