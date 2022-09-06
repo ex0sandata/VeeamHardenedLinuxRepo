@@ -148,9 +148,8 @@ case "$choice" in
         fi
 
         # Verzeichnis anlegen:
-        mkdir -p "$BACKUPDIR"
+        CreateBackupDir
 
-        print_text_in_color "$IGreen" "Directory $BACKUPDIR erfolgreich angelegt."
 
     ;;
     *)
