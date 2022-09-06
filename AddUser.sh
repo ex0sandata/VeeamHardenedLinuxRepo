@@ -68,7 +68,7 @@ else
             fi
         done
 
-        if echo "veeam:$VEEAMPASSWD" | sudo chpasswd
+        if echo "veeam:$VEEAMPASSWD" | chpasswd
         then
             msg_box "Das Passwort für den User 'veeam' ist nun '$VEEAMPASSWD'. Dieses Passwort muss in der Veeam Konsole später eingegeben werden. \n Das Passwort ist ebenfalls in der Textdatei $CONFIG gespeichert."
             echo -e "Das Passwort für den User 'veeam' ist:\n$VEEAMPASSWD" >> $CONFIG
@@ -90,10 +90,10 @@ fi
     #random password generator
     ROOTPASSWD=$(openssl rand -base64 31)
 
-    if echo "root:$ROOTPASSWD" | sudo chpasswd
+    if echo "root:$ROOTPASSWD" | chpasswd
     then
         echo -e "Das Passwort für den User 'root' ist:\n $ROOTPASSWD" >> $CONFIG
-        echo "Dieses Passwort muss in der Konsole für die 'Single-Use Credentials' des Root-Benutzers eingegeben werden" >> $CONFIG
+        echo -e "Dieses Passwort muss in der Konsole für die 'Single-Use Credentials' des Root-Benutzers eingegeben werden." >> $CONFIG
     fi
 
 exit 0
