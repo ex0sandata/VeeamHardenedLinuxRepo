@@ -7,7 +7,6 @@ TITLE="Veeam Backup Hardened Repository - $(date +%Y)"
 SYSVENDOR=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
 ISSUES="https://github.com/ex0sandata/veeamhardenedlinuxrepo/issues"
 SCRIPTS=/var/scripts
-BACKUPDIR=/opt
 CONFIG=/root/VHLR.txt
 REQUEST=0
 USER=$(sudo who --count | awk '{print $1 }')
@@ -18,6 +17,38 @@ DISTRO=$(lsb_release -sr)
 CODENAME=$(lsb_release -sc)
 KEYBOARD_LAYOUT=$(localectl status | grep "Layout" | awk '{print $3}')
 
+function CreateBackupDir(){
+    COUNT=1
+    while :
+    do
+        if [ -d /opt/BackupTarget$COUNT ]
+        then
+            COUNT=$((COUNT + 1))
+        else
+            NEWBACKUPDIR=/opt/BackupTarget$COUNT
+            print_text_in_color "$IGreen" "Directory $NEWBACKUPDIR erfolgreich angelegt."
+            mkdir $NEWBACKUPDIR
+            break
+        fi
+    done
+}
+
+BACKUPDIR=$(GetBackupTarget)
+function GetBackupTarget (){
+    COUNT=1
+    while :
+    do
+        if [ -d /opt/BackupTarget$COUNT ]
+        then
+            COUNT=$((COUNT + 1))
+        else
+            COUNT=$((COUNT - 1))
+            BACKUPDIR=/opt/BackupTarget$COUNT
+            print_text_in_color "$IGreen" "Directory $BACKUPDIR als Backupverzeichnis gefunden."
+            break
+        fi
+    done
+}
 
 function spinner_loading() {
     printf '['
