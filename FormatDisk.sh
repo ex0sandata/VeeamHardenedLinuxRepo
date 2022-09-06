@@ -23,7 +23,7 @@ format() {
     umount /mnt/* &> /dev/null
 
     # mkdir if not existing
-    mkdir -p "$BACKUPDIR"
+    CreateBackupDir
 
     msg_box "Sie werden nun eine Liste von Geräten sehen, auf welchen das Backupverzeichnis angelegt werden soll:
     Achtung! Alle Daten auf dieser Platte werden gelöscht werden!"
@@ -53,14 +53,14 @@ format() {
     if [ "$DISKTYPE" != "/dev/$DEVTYPE" ]
     then
         msg_box "Es scheint, als würde auf diesem Rechner kein 2. Datenträger (/dev/$DEVTYPE) existieren.
-        Dieses Skript setzt eine 2. Festplatte voraus.
-        Bitte fahren Sie diesen Server wieder herunter und installieren eine zusätzliche Festplatte."
+Dieses Skript setzt eine 2. Festplatte voraus.
+Bitte fahren Sie diesen Server wieder herunter und installieren eine zusätzliche Festplatte."
         exit 1
     elif [ "$GREPC" = 1 ]
     then
         msg_box "Es scheint, als würde auf diesem Rechner kein 2. Datenträger (/dev/$DEVTYPE) existieren.
-        Dieses Skript setzt eine 2. Festplatte voraus.
-        Bitte fahren Sie diesen Server wieder herunter und installieren eine zusätzliche Festplatte."
+Dieses Skript setzt eine 2. Festplatte voraus.
+Bitte fahren Sie diesen Server wieder herunter und installieren eine zusätzliche Festplatte."
         exit 1
     fi
 
@@ -118,10 +118,12 @@ format() {
             print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
             echo "/dev/disk/by-uuid/$UUID  $BACKUPDIR    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
 
-            msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot,
+            msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot, \n
             damit die Festplatte gemountet werden kann. Bis der Server neu gestartet wird, wird das Verzeichnis temporär gemountet."
             print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
             mount /dev/disk/by-uuid/$UUID $BACKUPDIR
+
+            REQUEST=1
 
             if [ $(df -h /opt | awk '{print $1}' | sed -n '2p') == $DISKTYPE ]
             then
@@ -137,8 +139,8 @@ format() {
 
     else
         msg_box "Es scheint, als würde /dev/$DEVTYPE nicht existieren.
-        Diese Option erfordert eine zusätzliche Festplatte.
-        Bitte fahren Sie diesen Server herunter und installieren Sie eine weitere Festplatte."
+Diese Option erfordert eine zusätzliche Festplatte.
+Bitte fahren Sie diesen Server herunter und installieren Sie eine weitere Festplatte."
         countdown "Bitte brechen Sie den Vorgang mit STRG + C ab, und schalten den Server mit dem Command 'sudo poweroff' herunter." "120"
         exit 1
     fi
