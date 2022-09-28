@@ -1,4 +1,4 @@
-# VeeamHardenedLinuxRepo Setup Script
+# VeeamHardenedLinuxRepo Setup Skript
 
 
 Dieses Skript setzt auf einen Blanken Ubuntu 20.04 und 22.04 Server ein Veeam Hardened Linux Repository auf und konfiguriert Optionale Sicherheitsschritte.
