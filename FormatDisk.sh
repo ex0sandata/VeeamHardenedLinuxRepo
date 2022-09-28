@@ -118,14 +118,14 @@ Bitte fahren Sie diesen Server wieder herunter und installieren eine zusätzlich
             print_text_in_color "$IBlue" "$DISKTYPE wird in /etc/fstab gemountet, bitte warten."
             echo "/dev/disk/by-uuid/$UUID  $BACKUPDIR    xfs defaults 0 0" | tee -a /etc/fstab >/dev/null
 
-            msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot, \n
-            damit die Festplatte gemountet werden kann. Bis der Server neu gestartet wird, wird das Verzeichnis temporär gemountet."
+            msg_box "$DISKTYPE wurde erfolgreich in /etc/fstab geschrieben. Der Server benötigt einen Reboot,
+damit die Festplatte gemountet werden kann. Bis der Server neu gestartet wird, wird das Verzeichnis temporär gemountet."
             print_text_in_color "$IGreen" "$DISKTYPE wurde erfolgreich eingerichtet!"
             mount /dev/disk/by-uuid/$UUID $BACKUPDIR
 
             REQUEST=1
 
-            if [ $(df -h /opt | awk '{print $1}' | sed -n '2p') == $DISKTYPE ]
+            if [ $(df -h $BACKUPDIR | awk '{print $1}' | sed -n '2p') == $DISKTYPE ]
             then
                 print_text_in_color "$IGreen" "Temporärer Mount erfolgreich!"
             else
