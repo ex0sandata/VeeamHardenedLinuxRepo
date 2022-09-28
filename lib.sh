@@ -21,35 +21,47 @@ function CreateBackupDir(){
     COUNT=1
     while :
     do
-        if [ -d /opt/BackupTarget$COUNT ]
+        if [ ! -d /opt/BackupTarget$COUNT ]
         then
-            COUNT=$((COUNT + 1))
-        else
-            NEWBACKUPDIR=/opt/BackupTarget$COUNT
-            print_text_in_color "$IGreen" "Directory $NEWBACKUPDIR erfolgreich angelegt."
-            mkdir $NEWBACKUPDIR
-            break
+            
+            if [ "$(ls -A /opt/BackupTarget$COUNT)"  ]
+            then
+                COUNT=$((COUNT + 1))
+                print_text_in_color "$IPurple" "Dir /opt/BackupTarget$COUNT existiert und ist nicht leer, prüfe nächstes...."
+            else
+                NEWBACKUPDIR=/opt/BackupTarget$COUNT
+                print_text_in_color "$IGreen" "Directory $NEWBACKUPDIR erfolgreich angelegt."
+                mkdir $NEWBACKUPDIR
+                BACKUPDIR=$NEWBACKUPDIR
+                break
+            fi
+        else 
+                ## Backupdir mit nummer 1 anlegen 
+                NEWBACKUPDIR=/opt/BackupTarget$COUNT
+                print_text_in_color "$IGreen" "Directory $NEWBACKUPDIR erfolgreich angelegt."
+                mkdir $NEWBACKUPDIR 
+                BACKUPDIR=$NEWBACKUPDIR
+                break    
         fi
     done
 }
 
 
-function GetBackupTarget (){
-    COUNT=1
-    while :
-    do
-        if [ -d /opt/BackupTarget$COUNT ]
-        then
-            COUNT=$((COUNT + 1))
-        else
-            COUNT=$((COUNT - 1))
-            BACKUPDIR=/opt/BackupTarget$COUNT
-            print_text_in_color "$IGreen" "Directory $BACKUPDIR als Backupverzeichnis gefunden."
-            break
-        fi
-    done
-}
-BACKUPDIR=$(GetBackupTarget)
+# function GetBackupTarget (){
+#     COUNT=1
+#     while :
+#     do
+#         if [ -d /opt/BackupTarget$COUNT ]
+#         then
+#             COUNT=$((COUNT + 1))
+#         else
+#             #COUNT=$((COUNT - 1))
+#             BACKUPDIR=/opt/BackupTarget$COUNT
+#             print_text_in_color "$IGreen" "Directory $BACKUPDIR als Backupverzeichnis gefunden."
+#             break
+#         fi
+#     done
+# }
 
 function spinner_loading() {
     printf '['
