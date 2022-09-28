@@ -33,7 +33,7 @@ function CreateBackupDir(){
     done
 }
 
-BACKUPDIR=$(GetBackupTarget)
+
 function GetBackupTarget (){
     COUNT=1
     while :
@@ -49,6 +49,7 @@ function GetBackupTarget (){
         fi
     done
 }
+BACKUPDIR=$(GetBackupTarget)
 
 function spinner_loading() {
     printf '['
