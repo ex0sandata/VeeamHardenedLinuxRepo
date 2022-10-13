@@ -50,8 +50,8 @@ chmod +x /var/scripts/*.sh
 
 #### Start:
 source /var/scripts/lib.sh
-
 install_if_not whiptail
+
 run_script instructions
 
 true
@@ -85,17 +85,16 @@ print_text_in_color "$BIPurple" "Installiere dependencies...."
 install_if_not lshw
 install_if_not net-tools
 install_if_not whiptail
-install_if_not apt-utils
 install_if_not ufw
 install_if_not ssh
 install_if_not sudo
-install_if_not apt-transport-https
 install_if_not netplan.io
 
 ## nice to have dependencies
 
 print_text_in_color "$BIPurple" "Installiere nice-to-have dependencies...."
 install_if_not htop
+install_if_not btop
 install_if_not dnsutils
 
 # We don't want automatic updates since they might fail (we use our own script)
