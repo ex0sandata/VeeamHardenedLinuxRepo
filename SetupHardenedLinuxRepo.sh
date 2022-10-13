@@ -51,6 +51,7 @@ chmod +x /var/scripts/*.sh
 #### Start:
 source /var/scripts/lib.sh
 
+install_if_not whiptail
 run_script instructions
 
 true
