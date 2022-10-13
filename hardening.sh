@@ -266,12 +266,12 @@ fi
 
 # Server configurations
 choice=$(whiptail --title "$TITLE" --checklist \
-"Bitte wählen SIe aus, was konfiguriert werden soll:
+"Bitte wählen Sie aus, was konfiguriert werden soll:"
 "Ändern des SSH Ports" "(Verschleierung des Servers)" OFF \
 "Ubuntu Advantage" "Viele Ubuntu ESM funktionen, z.B. Kernel-LivePatch" OFF \
 "Installation von Fail2Ban" "(Bei zu viel Fehlerhaften SSH-Login Versuchen wird der Service deaktiviert)" OFF \
 "SSH PrivateKey Authentifizierung" "(Verwenden eines Private Key zum einloggen von SSH-Sessions)" OFF \
-"Multi-Faktor Authentifizierung" "(Verwendung von Google Authenticator)" OFF\
+"Multi-Faktor Authentifizierung" "(Verwendung von Google Authenticator)" OFF )
 
 case "$choice" in
     *"SSH PrivateKey"*)
