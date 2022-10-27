@@ -33,8 +33,15 @@ else
     apt-get update -q4
     apt-get install curl -y
 fi
-    
+
+# Installiere Screen wenn nicht existent
+if [ "$(dpkg-query -W -f='${Status}' "screen" 2>/dev/null | grep -c "ok installed")" = "1" ]
+then
+    echo "screen OK"
+else
+    apt-get update -q4
     apt-get install screen -y
+fi
 
 rm -rf /var/scripts
 mkdir /var/scripts
@@ -51,6 +58,6 @@ chmod +x /var/scripts/*.sh
 
 #### Start:
 
-screen -dmR -S VHLR /bin/bash /var/scripts/SetupHardenedLinuxRepo.sh 
+screen -dm -S VHLR /bin/bash /var/scripts/SetupHardenedLinuxRepo.sh 
 
 #/bin/bash /var/scripts/SetupHardenedLinuxRepo.sh
