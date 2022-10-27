@@ -32,6 +32,7 @@ then
 else
     apt-get update -q4
     apt-get install curl -y
+    apt-get install screen -y
 fi
 
 rm -rf /var/scripts
@@ -47,6 +48,6 @@ curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/st
 
 chmod +x /var/scripts/*.sh
 
-
 #### Start:
-bash /var/scripts/SetupHardenedLinuxRepo.sh
+
+if [ -z "$STY" ]; then exec screen -dm -S VHLR /bin/bash /var/scripts/SetupHardenedLinuxRepo.sh ; fi
