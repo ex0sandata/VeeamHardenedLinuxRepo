@@ -57,7 +57,7 @@ curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/st
 chmod +x /var/scripts/*.sh
 
 #### Start:
-
-screen -dm -S VHLR /bin/bash /var/scripts/SetupHardenedLinuxRepo.sh 
+script /dev/null
+screen -dm -S "VHLR" /bin/bash /var/scripts/SetupHardenedLinuxRepo.sh 
 
 #/bin/bash /var/scripts/SetupHardenedLinuxRepo.sh
