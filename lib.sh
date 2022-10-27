@@ -80,6 +80,10 @@ function install_if_not() {
     fi
 }
 
+function enable_service () {
+    systemctl enable "${1}" && systemctl start "${1}"
+}
+
 function update_system(){
     apt-get update -q4 & spinner_loading && RUNLEVEL=1 apt-get full-upgrade -y & spinner_loading
     apt-get autoremove & spinner_loading
@@ -437,3 +441,4 @@ BIBlue='\e[1;94m'       # Blue
 BIPurple='\e[1;95m'     # Purple
 BICyan='\e[1;96m'       # Cyan
 BIWhite='\e[1;97m'      # White
+
