@@ -51,6 +51,8 @@ chmod +x /var/scripts/*.sh
 #### Start:
 source /var/scripts/lib.sh
 install_if_not whiptail
+install_if_not ssh
+enable_service ssh
 
 run_script instructions
 
@@ -77,9 +79,6 @@ is_process_running dpkg
 print_text_in_color "$BIPurple" "OS Patchen, bevor irgendetwas gemacht wird...."
 update_system
 
-# Automatically restart services
-# Restart mode: (l)ist only, (i)nteractive or (a)utomatically.
-#sed -i "s|#\$nrconf{restart} = .*|\$nrconf{restart} = 'a';|g" /etc/needrestart/needrestart.conf
 
 print_text_in_color "$BIPurple" "Installiere dependencies...."
 install_if_not lshw
@@ -190,7 +189,7 @@ function brsetup (){
     Falls das Root-Konto doch entsperrt werden sollte, führen Sie bitte diesen Command aus: 
     'sudo unlock-root'"
 
--->    msg_box "$VEEAMUSERNAME $VEEAMPASSWD $VEEAMPORT $ROOTUSERNAME $ROOTPASSWD"
+#-->    msg_box "$VEEAMUSERNAME $VEEAMPASSWD $VEEAMPORT $ROOTUSERNAME $ROOTPASSWD"
 
     if [ ! -f /usr/bin/unlock-root ]
     then
