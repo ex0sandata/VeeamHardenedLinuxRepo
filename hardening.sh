@@ -5,33 +5,32 @@ source /var/scripts/lib.sh
 
 function SSHPort(){
 
-        # Check if webmin is already installed
-    SSHPORT=28910
-    cat << SSH_CONF > "$SSH_CONF"
-
-    AllowTcpForwarding no
-    ClientAliveCountMax 2
-    Compression no
-    LogLevel verbose
-    MaxAuthTries 2
-    MaxSessions 2
-    PermitRootLogin no
-    # Port will be changed
-    Port 28910
-    # See https://de.wikipedia.org/wiki/Liste_der_standardisierten_Ports
-    TCPKeepAlive no
-    X11Forwarding no
-    AllowAgentForwarding no
-    # https://help.ubuntu.com/community/SSH/OpenSSH/Configuring#Specify_Which_Accounts_Can_Use_SSH
-    AllowUsers $REALUSER
+SSHPORT=28910
+cat << SSH_CONF > "$SSH_CONF"
+AllowTcpForwarding no
+ClientAliveCountMax 2
+Compression no
+LogLevel verbose
+MaxAuthTries 2
+MaxSessions 2
+PermitRootLogin no
+# Port will be changed
+Port 28910
+# See https://de.wikipedia.org/wiki/Liste_der_standardisierten_Ports
+TCPKeepAlive no
+X11Forwarding no
+AllowAgentForwarding no
+# https://help.ubuntu.com/community/SSH/OpenSSH/Configuring#Specify_Which_Accounts_Can_Use_SSH
+AllowUsers $REALUSER
 SSH_CONF
 
     # Inform user
-    msg_box "SSH ist erfolgreich gehärtet worden!"
-
+    msg_box "SSH ist erfolgreich gehärtet worden, der SSH-Port für diesen Server lautet jetzt: $SSHPORT"
+    echo -e "Der SSH-Port ist für diesen Server ist:\n $SSHPort" >> $CONFIG
 }
 
 function fail2ban(){
+
     SCRIPT_NAME="Fail2Ban"
     SCRIPT_EXPLAINER="Fail2ban provides extra Brute Force protextion for Nextcloud.
     It scans the Nextcloud and SSH log files and bans IPs that show malicious \
@@ -81,55 +80,56 @@ function fail2ban(){
 
     # Create veeam.conf file
     # Using https://docs.nextcloud.com/server/stable/admin_manual/installation/harden_server.html#setup-a-filter-and-a-jail-for-nextcloud
-    cat << NCONF > /etc/fail2ban/filter.d/veeam.conf
-    [Definition]
-    _groupsre = (?:(?:,?\s*"\w+":(?:"[^"]+"|\w+))*)
-    failregex = ^\{%(_groupsre)s,?\s*"remoteAddr":"<HOST>"%(_groupsre)s,?\s*"message":"Login failed:
-                ^\{%(_groupsre)s,?\s*"remoteAddr":"<HOST>"%(_groupsre)s,?\s*"message":"Trusted domain error.
-    datepattern = ,?\s*"time"\s*:\s*"%%Y-%%m-%%d[T ]%%H:%%M:%%S(%%z)?"
+
+cat << NCONF > /etc/fail2ban/filter.d/veeam.conf
+[Definition]
+_groupsre = (?:(?:,?\s*"\w+":(?:"[^"]+"|\w+))*)
+failregex = ^\{%(_groupsre)s,?\s*"remoteAddr":"<HOST>"%(_groupsre)s,?\s*"message":"Login failed:
+            ^\{%(_groupsre)s,?\s*"remoteAddr":"<HOST>"%(_groupsre)s,?\s*"message":"Trusted domain error.
+datepattern = ,?\s*"time"\s*:\s*"%%Y-%%m-%%d[T ]%%H:%%M:%%S(%%z)?"
 NCONF
 
+# Create jail.local file
 
-    # Create jail.local file
-    cat << FCONF > /etc/fail2ban/jail.local
-    # The DEFAULT allows a global definition of the options. They can be overridden
-    # in each jail afterwards.
-    [DEFAULT]
-    # "ignoreip" can be an IP address, a CIDR mask or a DNS host. Fail2ban will not
-    # ban a host which matches an address in this list. Several addresses can be
-    # defined using space separator.
-    ignoreip = 127.0.0.1/8 192.168.0.0/16 172.16.0.0/12 10.0.0.0/8
-    # "bantime" is the number of seconds that a host is banned.
-    bantime  = $BANTIME_
-    # A host is banned if it has generated "maxretry" during the last "findtime"
-    # seconds.
-    findtime = $FINDTIME_
-    maxretry = $MAXRETRY_
-    #
-    # ACTIONS
-    #
-    banaction = iptables-multiport
-    protocol = tcp
-    chain = INPUT
-    action_ = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-    action_mw = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-    action_mwl = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-    action = %(action_)s
-    #
-    # SSH
-    #
-    [sshd]
-    enabled  = true
-    maxretry = $MAXRETRY_
-    #
-    # HTTP servers
-    #
-    [veeam]
-    enabled  = true
-    port     = http,https
-    filter   = veeam
-    logpath  = /var/log/fail2ban_veeam.log
-    maxretry = $MAXRETRY_
+cat << FCONF > /etc/fail2ban/jail.local
+# The DEFAULT allows a global definition of the options. They can be overridden
+# in each jail afterwards.
+[DEFAULT]
+# "ignoreip" can be an IP address, a CIDR mask or a DNS host. Fail2ban will not
+# ban a host which matches an address in this list. Several addresses can be
+# defined using space separator.
+ignoreip = 127.0.0.1/8 192.168.0.0/16 172.16.0.0/12 10.0.0.0/8
+# "bantime" is the number of seconds that a host is banned.
+bantime  = $BANTIME_
+# A host is banned if it has generated "maxretry" during the last "findtime"
+# seconds.
+findtime = $FINDTIME_
+maxretry = $MAXRETRY_
+#
+# ACTIONS
+#
+banaction = iptables-multiport
+protocol = tcp
+chain = INPUT
+action_ = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+action_mw = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+action_mwl = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+action = %(action_)s
+#
+# SSH
+#
+[sshd]
+enabled  = true
+maxretry = $MAXRETRY_
+#
+# HTTP servers
+#
+[veeam]
+enabled  = true
+port     = http,https
+filter   = veeam
+logpath  = /var/log/fail2ban_veeam.log
+maxretry = $MAXRETRY_
 FCONF
 
     # Update settings
@@ -149,22 +149,23 @@ FCONF
     exit
     fi
 
-    # Create Fail2ban report script
-    cat << FAIL2BAN_REPORT > "$SCRIPTS/daily_fail2ban_report.sh"
-    #!/bin/bash
+# Create Fail2ban report script
 
-    # Look for ip addresses
-    BANNED_IPS=\$(grep "Ban " /var/log/fail2ban.log | grep "\$(date +%Y-%m-%d)" \
-    | awk -F "NOTICE  " '{print "Jail:",\$2}' | sort)
-    # Exit if nothing was found
-    if [ -z "\$BANNED_IPS" ]
-    then
-        exit
-    fi
-    # Report if something was found
-    source /var/scripts/lib.sh
-    send_mail "Your daily Fail2Ban report" "These IP's got banned today:
-    \$BANNED_IPS"
+cat << FAIL2BAN_REPORT > "$SCRIPTS/daily_fail2ban_report.sh"
+#!/bin/bash
+
+# Look for ip addresses
+BANNED_IPS=\$(grep "Ban " /var/log/fail2ban.log | grep "\$(date +%Y-%m-%d)" \
+| awk -F "NOTICE  " '{print "Jail:",\$2}' | sort)
+# Exit if nothing was found
+if [ -z "\$BANNED_IPS" ]
+then
+    exit
+fi
+# Report if something was found
+source /var/scripts/lib.sh
+send_mail "Your daily Fail2Ban report" "These IP's got banned today:
+\$BANNED_IPS"
 
 FAIL2BAN_REPORT
 
@@ -222,13 +223,13 @@ function GAuth(){
         --force \
         --window-size=3
     then
-        msg_box "Bitte stellen Sie sicher, dass Sie den QR-Code mit der OTP-App scannen und die Notfall-Codes aufschreiben!\n
+        msg_box "Bitte stellen Sie sicher, dass Sie den QR-Code mit der OTP-App scannen und die Notfall-Codes aufschreiben!\
     Ohne diese können Sie sich nicht mehr via SSH einloggen!
     Um 2FA zu deaktiveren, müssen Sie dieses Skript erneut starten (sudo bash /var/scripts/hardening.sh)."
         any_key "Eine Taste Drücken, um weiterzumachen"
         while :
         do 
-            if ! yesno_box_no "Sind Sie sicher, dass Sie den QR-Code gescannt haben und die Notfall-Codes notiert haben?\n
+            if ! yesno_box_no "Sind Sie sicher, dass Sie den QR-Code gescannt haben und die Notfall-Codes notiert haben?\
     Ohne diese können Sie sich nicht mehr via SSH einloggen!
     Um 2FA zu deaktiveren, müssen Sie dieses Skript erneut starten (sudo bash /var/scripts/hardening.sh)."
             then
@@ -237,21 +238,59 @@ function GAuth(){
                 break
             fi
         done
-        msg_box "2FA SSH authentication für $REALUSER wurde erfolgreich konfiguriert.\n
+        msg_box "2FA SSH authentication für $REALUSER wurde erfolgreich konfiguriert.\
     Die Backup-Codes sind in: /root/.google_authenticator
     Um 2FA zu deaktiveren, müssen Sie dieses Skript erneut starten (sudo bash /var/scripts/hardening.sh)."
     else
-        msg_box "2FA SSH authentication Konfiguration war nicht erfolgreich.\n
-    Um 2FA zu deaktiveren, müssen Sie dieses Skript erneut starten (sudo bash /var/scripts/hardening.sh)!\n
+        msg_box "2FA SSH authentication Konfiguration war nicht erfolgreich.\
+    Um 2FA zu deaktiveren, müssen Sie dieses Skript erneut starten (sudo bash /var/scripts/hardening.sh)!\
     Ansonsten können Sie sich nicht mehr via SSH einloggen."
     fi
 }
 
 function PrivKey(){
+    
+#    SCRIPT_NAME="Private Key Authentifizierung"
+#    SCRIPT_EXPLAINER="Diese Funktion ermöglicht das die Authentifizierung per SSH über ein \
+#    automatisch generiertes Schlüsselpaar, welches die Sicherheit der SSH-Authentifizierung 
+#    Livepatching an. Dafür muss ein Account bei Canonical erstellt und ein Token generiert werden."
+    msg_box "tbd...."
     continue
 }
 
 function Advantage(){
+
+    SCRIPT_NAME="Ubuntu Advantage / Pro"
+    SCRIPT_EXPLAINER="Ubuntu Pro (ehemals Ubuntu Advantage) ist ein Service des \ 
+    Ubuntu-Entwicklers Canonical und bietet ESM (Extended Security Maintenance), \
+    sprich - längeren Support mit Sicherheitsupdates, aber auch funktionen, wie Kernel \
+    Livepatching an. Dafür muss ein Account bei Canonical erstellt und ein Token generiert werden."
+
+    print_text_in_color "$IPurple" "Installiere die Ubuntu-Advantage-Tools"
+    install_if_not ubuntu-advantage-tools
+    
+
+    msg_box "Bitte melden Sie sich auf dieser Seite an oder erstellen Sie ein Konto; danach kopieren Sie den generierten Token:\
+    https://ubuntu.com/pro"
+
+        while :
+        do
+            TOKEN=$(input_box_flow "Bitte geben Sie den Token für Ubuntu Pro ein:")
+            if [[ "$TOKEN" == $(pro status | grep -c 0)]]
+            then
+                msg_box "Da hat etwas nicht geklappt, bitte erneut eingeben!"
+            else
+                if ! (( $(pro status | grep -c 0) ))
+                then
+                    pro enable livepatch
+                    pro enable esm-infra
+                fi
+                    msg_box "Ubuntu Advantage ist nun eingerichtet."
+                break
+            fi
+        
+        done  
+
     continue
 }
 
@@ -288,7 +327,7 @@ case "$choice" in
     ;;&
     *"SSH-Port"*)
         print_text_in_color "$ICyan" "Änderung des SSH-Ports wurde ausgewählt..."
-        Advantage
+        SSHPort
     ;;&
     *"Multi-Faktor-Authentifizierung"*)
         print_text_in_color "$ICyan" "Multi-Faktor-Authentifizierung gewählt...."
