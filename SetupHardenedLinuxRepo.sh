@@ -56,10 +56,9 @@ enable_service ssh
 
 run_script instructions
 
-true
 SCRIPT_NAME="Veeam Hardened Linux Repository Installation Skript"
 SCRIPT_EXPLAINER="Dieses Skript installiert auf diesem Server ein Veeam Hardened Linux Repository."
-   
+
 
 print_text_in_color "$BIPurple" "Generiere locale für aktuelle Session...."
 install_if_not locales
@@ -69,6 +68,7 @@ export LANG=C.UTF-8
 
 msg_box "$SCRIPT_EXPLAINER"
 
+print_text_in_color "$BIPurple" "Checke Hardware Requirements"
 cpu_check 2 Veeam
 ram_check 4 Veeam
 check_distro_version
