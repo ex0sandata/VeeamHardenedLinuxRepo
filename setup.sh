@@ -59,6 +59,5 @@ chmod +x /var/scripts/*.sh
 #### Start:
 /bin/screen -DmS VHLR /bin/bash -c "/var/scripts/SetupHardenedLinuxRepo.sh"
 sleep 2
-screen -r
 
 #/bin/bash /var/scripts/SetupHardenedLinuxRepo.sh
