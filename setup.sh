@@ -32,8 +32,9 @@ then
 else
     apt-get update -q4
     apt-get install curl -y
-    apt-get install screen -y
 fi
+    
+    apt-get install screen -y
 
 rm -rf /var/scripts
 mkdir /var/scripts
@@ -50,6 +51,6 @@ chmod +x /var/scripts/*.sh
 
 #### Start:
 
-if [ -z "$STY" ]; then screen -dm -S VHLR /bin/bash /var/scripts/SetupHardenedLinuxRepo.sh ; fi
+screen -dmR -S VHLR /bin/bash /var/scripts/SetupHardenedLinuxRepo.sh 
 
 #/bin/bash /var/scripts/SetupHardenedLinuxRepo.sh
