@@ -28,36 +28,23 @@ fi
 # Installiere curl wenn nicht existent
 if [ "$(dpkg-query -W -f='${Status}' "curl" 2>/dev/null | grep -c "ok installed")" = "1" ]
 then
-    echo "curl OK"
+    echo "curl OK" 
 else
     apt-get update -q4
     apt-get install curl -y
 fi
 
-# Installiere Screen wenn nicht existent
-if [ "$(dpkg-query -W -f='${Status}' "screen" 2>/dev/null | grep -c "ok installed")" = "1" ]
-then
-    echo "screen OK"
-else
-    apt-get update -q4
-    apt-get install screen -y
-fi
-
 rm -rf /var/scripts
 mkdir /var/scripts
 
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh -s > /var/scripts/lib.sh 
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh -s > /var/scripts/FormatDisk.sh
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh -s > /var/scripts/SetupHardenedLinuxRepo.sh
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh -s > /var/scripts/AddUser.sh
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/instructions.sh -s > /var/scripts/instructions.sh
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/hardening.sh -s > /var/scripts/hardening.sh
-curl https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/static_ip.sh -s > /var/scripts/static_ip.sh
+curl -s https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/lib.sh > /var/scripts/lib.sh 
+curl -s https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/FormatDisk.sh > /var/scripts/FormatDisk.sh
+curl -s https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/SetupHardenedLinuxRepo.sh > /var/scripts/SetupHardenedLinuxRepo.sh
+curl -s https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/AddUser.sh > /var/scripts/AddUser.sh
+curl -s https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/instructions.sh > /var/scripts/instructions.sh
+curl -s https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/hardening.sh > /var/scripts/hardening.sh
+curl -s https://raw.githubusercontent.com/ex0sandata/VeeamHardenedLinuxRepo/main/static_ip.sh > /var/scripts/static_ip.sh
 
 chmod +x /var/scripts/*.sh
 
-#### Start:
-/bin/screen -DmS VHLR /bin/bash -c "/var/scripts/SetupHardenedLinuxRepo.sh"
-sleep 2
-
-#/bin/bash /var/scripts/SetupHardenedLinuxRepo.sh
+/bin/bash /var/scripts/SetupHardenedLinuxRepo.sh
