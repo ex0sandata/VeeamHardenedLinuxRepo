@@ -156,7 +156,7 @@ function disableroot(){
 }
 
 function enableroot(){
-    if [ grep -q 'root\:\/usr\/sbin\/nologin' /etc/passwd ]
+    if [ grep 'root\:\/usr\/sbin\/nologin' /etc/passwd ]
     then
         sed -i 's|root\:\/usr\/sbin\/nologin|root\:\/bin\/bash|' /etc/passwd
     fi

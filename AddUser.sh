@@ -37,7 +37,7 @@ then
 
     if echo "veeam:$VEEAMPASSWD" | sudo chpasswd
     then
-        echo "Das Passwort für den User Veeam ist:          $VEEAMPASSWD" >> $CONFIG
+        echo "Das Passwort für den User Veeam ist: \n$VEEAMPASSWD" >> $CONFIG
         echo "Dieses Passwort muss in der Veeam Konsole für die 'Single-Use Credentials' eingegeben werden" >> $CONFIG
     fi
 else
@@ -93,7 +93,7 @@ fi
 
     if echo "root:$ROOTPASSWD" | chpasswd
     then
-        echo -e "Das Passwort für den User 'root' ist:\n $ROOTPASSWD" >> $CONFIG
+        echo -e "Das Passwort für den User 'root' ist:\n$ROOTPASSWD" >> $CONFIG
         echo -e "Dieses Passwort muss in der Konsole für die 'Single-Use Credentials' des Root-Benutzers eingegeben werden." >> $CONFIG
     fi
 
