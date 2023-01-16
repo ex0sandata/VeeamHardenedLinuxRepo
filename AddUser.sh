@@ -20,7 +20,8 @@ then
     
     print_text_in_color "$IGreen" "User 'veeam' wird automatisch angelegt..."
     useradd veeam
-    useradd -b $BACKUPDIR -d $BACKUPDIR -s /bin/bash "$veeam"
+    
+    useradd -b $BACKUPDIR -s /bin/bash "$veeam"
     
     print_text_in_color "$IGreen" "Neuer User mit dem Namen veeam angelegt"
     groupadd VeeamBR

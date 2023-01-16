@@ -11,18 +11,6 @@ fi
 # IPv4 for apt bevorzugen:
 echo 'Acquire::ForceIPv4 "true";' >> /etc/apt/apt.conf.d/99force-ipv4
 
-# Fix fancy progress bar for apt-get
-# https://askubuntu.com/a/754653
-if [ -d /etc/apt/apt.conf.d ]
-then
-    if ! [ -f /etc/apt/apt.conf.d/99progressbar ]
-    then
-        echo 'Dpkg::Progress-Fancy "1";' > /etc/apt/apt.conf.d/99progressbar
-        echo 'APT::Color "1";' >> /etc/apt/apt.conf.d/99progressbar
-        chmod 644 /etc/apt/apt.conf.d/99progressbar
-    fi
-fi
-
 # Installiere curl wenn nicht existent
 if [ "$(dpkg-query -W -f='${Status}' "curl" 2>/dev/null | grep -c "ok installed")" = "1" ]
 then

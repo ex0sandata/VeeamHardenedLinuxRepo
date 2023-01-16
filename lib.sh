@@ -7,7 +7,7 @@ TITLE="Veeam Backup Hardened Repository - $(date +%Y)"
 SYSVENDOR=$(cat /sys/devices/virtual/dmi/id/sys_vendor)
 ISSUES="https://github.com/ex0sandata/veeamhardenedlinuxrepo/issues"
 SCRIPTS=/var/scripts
-CONFIG=/root/VHLR.txt
+CONFIG=/opt/VHLR.txt
 REQUEST=0
 USER=$(sudo who --count | awk '{print $1 }')
 REALUSER=$(echo "${USER//#}")
@@ -395,6 +395,41 @@ function run_script(){
     then
         bash "${SCRIPTS}/${1}.sh"
     fi
+}
+
+function brsetup (){
+    msg_box "Die Konfiguration ist nun fertig. Bitte geben Sie nun die Daten folgenden Seiten in der Veeam Konsole ein, um diesen Server zu verbinden."
+
+    msg_box "Die Konfigurationsdaten sind in dieser Datei gespeichert: $CONFIG
+    Eine Anleitung mit Bildern zur Einrichtung in der Konsole finden Sie hier:
+    ### LINK ###
+    "
+    msg_box "Letzter Hinweis: Sobald sie die den Server erfolgreich verbunden haben, wird das Root-Konto aus Sicherheitsgründen wieder deaktiviert.
+    Falls das Root-Konto doch entsperrt werden sollte, führen Sie bitte diesen Command aus: 
+    'sudo unlock-root'"
+
+    msg_box "$VEEAMUSERNAME $VEEAMPASSWD $VEEAMPORT $ROOTUSERNAME $ROOTPASSWD"
+
+    if [ ! -f /usr/bin/unlock-root ]
+    then
+        echo -e "#/bin/bash\n passwd -u root \n source /var/scripts/lib.sh\n disableroot" >> /usr/bin/unlock-root && chmod +x /usr/bin/unlock-root
+    fi
+}
+
+function readcreds (){
+    brsetup
+    while :
+    do 
+        if yesno_box_no "War die Einrichtung erfolgreich? Wenn Sie mit 'nein' bestätigen, werden die Credentials noch einmal angezeigt."
+        then
+            brsetup
+        else
+            passwd -l root
+            enableroot
+            break
+        fi
+    done
+      
 }
 
 
