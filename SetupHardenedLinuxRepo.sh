@@ -56,6 +56,12 @@ install_if_not htop
 install_if_not btop
 install_if_not dnsutils
 
+# Uninstall snap* if installed
+if [ (dpkg -s snapd | egrep ok -c) == 1 ]
+then
+    apt remove --purge snap* -y
+fi
+
 # We don't want automatic updates since they might fail (we use our own script)
 print_text_in_color "$BIPurple" "deaktiviere automatische Updates...."
 if is_this_installed unattended-upgrades
