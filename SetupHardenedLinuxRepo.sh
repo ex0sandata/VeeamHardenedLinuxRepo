@@ -57,7 +57,7 @@ install_if_not btop
 install_if_not dnsutils
 
 # Uninstall snap* if installed
-if [ (dpkg -s snapd | egrep ok -c) == 1 ]
+if [ $(dpkg -s snapd | egrep ok -c) == 1 ]
 then
     apt remove --purge snap* -y
 fi
