@@ -63,20 +63,11 @@ function CreateBackupDir(){
 #     done
 # }
 
-function spinner_loading() {
-    printf '['
-    while ps "$!" > /dev/null; do
-        echo -n '⣾⣽⣻'
-        sleep '.7'
-    done
-    echo ']'
-}
-
 #### Install_if_not Installationsroutine ####
 function install_if_not() {
     if ! dpkg-query -W -f='${Status}' "${1}" | grep -q "ok installed"
     then
-        apt-get update -q4 & spinner_loading && RUNLEVEL=1 apt-get install "${1}" -y
+        apt-get update -q4 && RUNLEVEL=1 apt-get install "${1}" -y
     fi
 }
 
@@ -85,8 +76,8 @@ function enable_service () {
 }
 
 function update_system(){
-    apt-get update -q4 & spinner_loading && RUNLEVEL=1 apt-get full-upgrade -y & spinner_loading
-    apt-get autoremove & spinner_loading
+    apt-get update -q4 && RUNLEVEL=1 apt-get full-upgrade -y 
+    apt-get autoremove
 }
 
 function any_key() {

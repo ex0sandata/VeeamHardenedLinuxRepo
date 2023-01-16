@@ -40,6 +40,7 @@ print_text_in_color "$BIPurple" "OS Patchen, bevor irgendetwas gemacht wird...."
 update_system
 
 print_text_in_color "$BIPurple" "Installiere dependencies...."
+install_if_not vim
 install_if_not lshw
 install_if_not net-tools
 install_if_not whiptail
@@ -136,12 +137,9 @@ else
 fi
 
 #### Veeam B&R Einrichtung Konsole ####
-
-
 readcreds
 
 # VHLR Credentials Schützen
-
 chown root /opt/VHLR.txt 
 chmod 600 /opt/VHLR.txt
 

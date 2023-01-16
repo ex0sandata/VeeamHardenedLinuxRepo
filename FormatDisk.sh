@@ -107,7 +107,7 @@ Bitte fahren Sie diesen Server wieder herunter und installieren eine zusätzlich
         sleep 0.5
         print_text_in_color "$IBlue" "$DISKTYPE wird mit XFS formattiert..."
         mkfs.xfs -b size=4096 -m crc=1,reflink=1 "$DISKTYPE" -f
-        sleep 3 & spinner_loading
+        sleep 3
         
         UUID=$(lsblk -f | grep "${DEVTYPE}" | head -1 | awk '{print $3}')
         print_text_in_color "$IPurple" "UUID für die neue Partition: $UUID"

@@ -74,7 +74,7 @@ function fail2ban(){
     # failed attempts before banning an IP
     MAXRETRY_=20
 
-    apt-get update -q4 & spinner_loading
+    apt-get update -q4
     install_if_not fail2ban -y
     update-rc.d fail2ban disable
 
